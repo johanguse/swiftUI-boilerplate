@@ -18,6 +18,7 @@ final class AppContainer {
     let analytics: any AnalyticsService
     let crashReporter: any CrashReporter
     let notificationService: NotificationService
+    let purchaseManager: PurchaseManager
 
     // MARK: - Init
     init() {
@@ -31,6 +32,7 @@ final class AppContainer {
         analytics = AppAnalyticsService()
         crashReporter = AppCrashReporter()
         notificationService = NotificationService()
+        purchaseManager = PurchaseManager()
         wireNotificationService()
     }
 
@@ -84,12 +86,14 @@ final class AppContainer {
     func identify(user: User) {
         analytics.identify(userId: user.id)
         crashReporter.setUser(id: user.id)
+        purchaseManager.configure(userId: user.id)
     }
 
     /// Clears analytics + crash-reporter identity then signs the user out.
     func signOut() async {
         analytics.reset()
         crashReporter.clearUser()
+        purchaseManager.logOut()
         do { try await authRepository.signOut() } catch {}
         router.signOut()
     }

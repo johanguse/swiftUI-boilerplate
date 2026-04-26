@@ -75,6 +75,13 @@
 "location" = "Konum";
 "job_title" = "İş Unvanı";
 
+// MARK: - Abonelik
+"subscription" = "Abonelik";
+"upgrade_to_pro" = "Pro'ya Geç";
+"pro_active" = "Pro Aktif ✓";
+"restore_purchases" = "Satın Alımları Geri Yükle";
+"restoring" = "Geri Yükleniyor...";
+
 // MARK: - Ayarlar
 "change_photo" = "Fotoğrafı Değiştir";
 "settings_title" = "Ayarlar";

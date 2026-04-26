@@ -10,11 +10,13 @@ struct SettingsView: View {
     private let themeManager: ThemeManager
     private let localizationManager: LocalizationManager
     private let authRepository: any AuthRepositoryProtocol
+    private let purchaseManager: PurchaseManager
 
     init(container: AppContainer) {
         self.themeManager = container.themeManager
         self.localizationManager = container.localizationManager
         self.authRepository = container.authRepository
+        self.purchaseManager = container.purchaseManager
         _viewModel = State(initialValue: SettingsViewModel(
             themeManager: container.themeManager,
             localizationManager: container.localizationManager,
@@ -29,12 +31,14 @@ struct SettingsView: View {
     var body: some View {
         @Bindable var bindableTheme = themeManager
         @Bindable var bindableLang = localizationManager
+        @Bindable var bindablePurchase = purchaseManager
 
         NavigationStack {
             ScrollView {
                 VStack(spacing: 24) {
                     profileHeader
                     accountSection
+                    subscriptionSection
                     preferencesSection(themeBinding: $bindableTheme.selectedTheme,
                                        languageBinding: $bindableLang.currentLanguage)
                     aboutSection
@@ -69,8 +73,11 @@ struct SettingsView: View {
                     languageBinding: $bindableLang.currentLanguage,
                     isPresented: $showLanguagePicker
                 )
-                .presentationDetents([.height(200)])
+                .presentationDetents([.height(CGFloat(72 + AppLanguage.allCases.count * 57))])
                 .presentationDragIndicator(.visible)
+            }
+            .sheet(isPresented: $bindablePurchase.isPresentingPaywall) {
+                AppPaywallView()
             }
             .alert(
                 localizationManager.localizedString(for: .signOut),
@@ -162,6 +169,42 @@ struct SettingsView: View {
                     localization: localizationManager
                 )
                 showChangePassword = true
+            }
+        }
+    }
+
+    // MARK: - Subscription Section
+
+    private var subscriptionSection: some View {
+        SettingsSectionCard(title: localizationManager.localizedString(for: .subscription)) {
+            if purchaseManager.isProUser {
+                SettingsRow(
+                    icon: "star.fill",
+                    iconColor: .yellow,
+                    label: localizationManager.localizedString(for: .proActive),
+                    showChevron: false
+                )
+            } else {
+                SettingsRow(
+                    icon: "star.fill",
+                    iconColor: Color.appPrimary,
+                    label: localizationManager.localizedString(for: .upgradeToPro)
+                ) {
+                    purchaseManager.isPresentingPaywall = true
+                }
+            }
+
+            Divider().padding(.leading, 56)
+
+            SettingsRow(
+                icon: "arrow.clockwise",
+                iconColor: .gray,
+                label: purchaseManager.isLoadingRestore
+                    ? localizationManager.localizedString(for: .restoring)
+                    : localizationManager.localizedString(for: .restorePurchases),
+                showChevron: false
+            ) {
+                Task { await purchaseManager.restorePurchases() }
             }
         }
     }
@@ -368,16 +411,21 @@ private struct LanguagePickerSheet: View {
         VStack(spacing: 0) {
             Text(localization.localizedString(for: .language))
                 .font(.headline)
-                .padding(.top, 20)
+                .fontWeight(.semibold)
+                .frame(maxWidth: .infinity)
+                .padding(.top, 16)
                 .padding(.bottom, 12)
+
+            Divider()
 
             ForEach(AppLanguage.allCases) { language in
                 Button {
                     languageBinding = language
                     isPresented = false
                 } label: {
-                    HStack {
+                    HStack(spacing: 12) {
                         Text(language.flag)
+                            .font(.title3)
                         Text(language.displayName)
                             .font(.subheadline)
                             .foregroundStyle(Color.appText)
@@ -390,10 +438,14 @@ private struct LanguagePickerSheet: View {
                     }
                     .padding(.horizontal, 24)
                     .padding(.vertical, 14)
+                    .contentShape(Rectangle())
                 }
-                Divider().padding(.horizontal, 24)
+                .buttonStyle(.plain)
+
+                if language != AppLanguage.allCases.last {
+                    Divider().padding(.horizontal, 24)
+                }
             }
-            Spacer()
         }
         .background(Color.appSurface.ignoresSafeArea())
     }

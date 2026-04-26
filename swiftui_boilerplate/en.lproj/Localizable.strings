@@ -75,6 +75,13 @@
 "location" = "Location";
 "job_title" = "Job Title";
 
+// MARK: - Subscription
+"subscription" = "Subscription";
+"upgrade_to_pro" = "Upgrade to Pro";
+"pro_active" = "Pro Active ✓";
+"restore_purchases" = "Restore Purchases";
+"restoring" = "Restoring...";
+
 // MARK: - Settings
 "change_photo" = "Change Photo";
 "settings_title" = "Settings";

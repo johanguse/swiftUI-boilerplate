@@ -12,6 +12,8 @@
 		84705C752F9E4B4700D1162C /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = 84705C742F9E4B4700D1162C /* FirebaseCrashlytics */; };
 		84705C772F9E4B4700D1162C /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 84705C762F9E4B4700D1162C /* FirebaseMessaging */; };
 		84705C792F9E4B4700D1162C /* FirebasePerformance in Frameworks */ = {isa = PBXBuildFile; productRef = 84705C782F9E4B4700D1162C /* FirebasePerformance */; };
+		84705C872F9EA14700D1162C /* RevenueCat in Frameworks */ = {isa = PBXBuildFile; productRef = 84705C862F9EA14700D1162C /* RevenueCat */; };
+		84705C892F9EA14700D1162C /* RevenueCatUI in Frameworks */ = {isa = PBXBuildFile; productRef = 84705C882F9EA14700D1162C /* RevenueCatUI */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -75,6 +77,8 @@
 			files = (
 				84705C772F9E4B4700D1162C /* FirebaseMessaging in Frameworks */,
 				84705C752F9E4B4700D1162C /* FirebaseCrashlytics in Frameworks */,
+				84705C892F9EA14700D1162C /* RevenueCatUI in Frameworks */,
+				84705C872F9EA14700D1162C /* RevenueCat in Frameworks */,
 				84705C792F9E4B4700D1162C /* FirebasePerformance in Frameworks */,
 				84705C712F9E4B4700D1162C /* FirebaseAnalytics in Frameworks */,
 				84705C732F9E4B4700D1162C /* FirebaseAnalyticsCore in Frameworks */,
@@ -221,11 +225,14 @@
 				en,
 				Base,
 				tr,
+				es,
+				pt,
 			);
 			mainGroup = 85B5CE002F7D5F3300F0F206;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				84705C6F2F9E4B4700D1162C /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				84705C852F9EA14700D1162C /* XCRemoteSwiftPackageReference "purchases-ios" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 85B5CE0A2F7D5F3300F0F206 /* Products */;
@@ -642,6 +649,14 @@
 				minimumVersion = 12.12.1;
 			};
 		};
+		84705C852F9EA14700D1162C /* XCRemoteSwiftPackageReference "purchases-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/RevenueCat/purchases-ios";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.69.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -669,6 +684,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 84705C6F2F9E4B4700D1162C /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebasePerformance;
+		};
+		84705C862F9EA14700D1162C /* RevenueCat */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 84705C852F9EA14700D1162C /* XCRemoteSwiftPackageReference "purchases-ios" */;
+			productName = RevenueCat;
+		};
+		84705C882F9EA14700D1162C /* RevenueCatUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 84705C852F9EA14700D1162C /* XCRemoteSwiftPackageReference "purchases-ios" */;
+			productName = RevenueCatUI;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

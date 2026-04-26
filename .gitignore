@@ -69,4 +69,7 @@ fastlane/test_output
 
 # API Config (contains base URL — copy from APIConfig.swift.sample)
 swiftui_boilerplate/Core/Config/APIConfig.swift
+
+# RevenueCat Config (contains API key — copy from RevenueCatConfig.swift.sample)
+swiftui_boilerplate/Core/Config/RevenueCatConfig.swift
 Secrets.xcconfig

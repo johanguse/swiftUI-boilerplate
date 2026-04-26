@@ -6,6 +6,10 @@ import FirebaseCore
 import FirebaseMessaging
 #endif
 
+#if canImport(RevenueCat)
+import RevenueCat
+#endif
+
 // No @MainActor on the class: UIApplicationDelegate protocol requirements are
 // nonisolated; adding @MainActor generates actor-isolation warnings for every method.
 // All UIKit app-delegate callbacks arrive on the main thread anyway.
@@ -24,6 +28,14 @@ final class AppDelegate: NSObject, UIApplicationDelegate {
         FirebaseApp.configure()
         Messaging.messaging().delegate = self
         #endif
+
+        #if canImport(RevenueCat)
+        Purchases.configure(withAPIKey: RevenueCatConfig.apiKey)
+        #if DEBUG
+        Purchases.logLevel = .debug
+        #endif
+        #endif
+
         return true
     }
 

@@ -4,27 +4,35 @@ import Observation
 enum AppLanguage: String, CaseIterable, Identifiable {
     case english = "en"
     case turkish = "tr"
+    case spanish = "es"
+    case portuguese = "pt"
 
     var id: String { rawValue }
 
     var displayName: String {
         switch self {
-        case .english: return "English"
-        case .turkish: return "Türkçe"
+        case .english:    return "English"
+        case .turkish:    return "Türkçe"
+        case .spanish:    return "Español"
+        case .portuguese: return "Português"
         }
     }
 
     var shortCode: String {
         switch self {
-        case .english: return "EN"
-        case .turkish: return "TR"
+        case .english:    return "EN"
+        case .turkish:    return "TR"
+        case .spanish:    return "ES"
+        case .portuguese: return "PT"
         }
     }
 
     var flag: String {
         switch self {
-        case .english: return "🇺🇸"
-        case .turkish: return "🇹🇷"
+        case .english:    return "🇺🇸"
+        case .turkish:    return "🇹🇷"
+        case .spanish:    return "🇪🇸"
+        case .portuguese: return "🇧🇷"
         }
     }
 }

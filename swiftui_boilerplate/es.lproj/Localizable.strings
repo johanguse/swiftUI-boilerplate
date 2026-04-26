@@ -1,0 +1,120 @@
+// MARK: - Onboarding
+"onboarding_skip" = "Omitir";
+"onboarding_next" = "Siguiente";
+"onboarding_get_started" = "Empezar";
+"onboarding_welcome_title" = "Bienvenido";
+"onboarding_welcome_subtitle" = "Tu app todo en uno para mantenerte conectado, productivo y en control.";
+"onboarding_features_title" = "Todo lo que necesitas";
+"onboarding_features_subtitle" = "Funciones poderosas para usuarios modernos.";
+"onboarding_ready_title" = "¡Todo listo!";
+"onboarding_ready_subtitle" = "Comencemos. Crea una cuenta o inicia sesión para continuar.";
+"feature_secure_title" = "Seguro por defecto";
+"feature_secure_desc" = "Tus datos están cifrados y almacenados de forma segura.";
+"feature_fast_title" = "Ultrarrápido";
+"feature_fast_desc" = "Optimizado para velocidad en cada dispositivo.";
+"feature_global_title" = "Multiidioma";
+"feature_global_desc" = "Disponible en varios idiomas en todo el mundo.";
+
+// MARK: - Change Password
+"current_password" = "Contraseña Actual";
+"new_password" = "Nueva Contraseña";
+"confirm_new_password" = "Confirmar Nueva Contraseña";
+"change_password_title" = "Cambiar Contraseña";
+"password_changed" = "Contraseña cambiada exitosamente";
+"password_mismatch" = "Las contraseñas no coinciden";
+
+// MARK: - Notifications
+"notifications_title" = "Mantente al tanto";
+"notifications_subtitle" = "Activa las notificaciones para recibir actualizaciones, alertas y mensajes importantes.";
+"enable_notifications" = "Activar Notificaciones";
+"notifications_later" = "Quizás después";
+
+// MARK: - Welcome
+"welcome_title" = "Bienvenido de nuevo";
+"welcome_subtitle" = "Inicia sesión para continuar o crea una nueva cuenta";
+"sign_in" = "Iniciar sesión";
+"sign_up" = "Registrarse";
+
+// MARK: - Sign In
+"email" = "Correo electrónico";
+"password" = "Contraseña";
+"forgot_password" = "¿Olvidaste tu contraseña?";
+"no_account" = "¿No tienes una cuenta?";
+
+// MARK: - Sign Up
+"full_name" = "Nombre completo";
+"confirm_password" = "Confirmar contraseña";
+"already_have_account" = "¿Ya tienes una cuenta?";
+"passwords_do_not_match" = "Las contraseñas no coinciden";
+"create_account" = "Crear cuenta";
+
+// MARK: - Forgot Password
+"forgot_password_title" = "Restablecer contraseña";
+"forgot_password_subtitle" = "Ingresa tu correo y te enviaremos un enlace para restablecer tu contraseña";
+"send_reset_link" = "Enviar enlace";
+"reset_link_sent" = "¡Enlace enviado!";
+"reset_link_sent_subtitle" = "Revisa tu bandeja de entrada para el enlace de restablecimiento de contraseña.";
+"back_to_sign_in" = "Volver a iniciar sesión";
+
+// MARK: - Home
+"home_title" = "Inicio";
+"users" = "Usuarios";
+"followers" = "Seguidores";
+"following" = "Siguiendo";
+"good_morning" = "Buenos días";
+"good_afternoon" = "Buenas tardes";
+"good_evening" = "Buenas noches";
+"people" = "Personas";
+"no_users_yet" = "Aún no hay personas";
+"my_profile" = "Mi perfil";
+
+// MARK: - Profile / Settings
+"profile_title" = "Perfil";
+"edit_profile" = "Editar perfil";
+"bio" = "Bio";
+"location" = "Ubicación";
+"job_title" = "Puesto";
+
+// MARK: - Suscripción
+"subscription" = "Suscripción";
+"upgrade_to_pro" = "Mejorar a Pro";
+"pro_active" = "Pro Activo ✓";
+"restore_purchases" = "Restaurar compras";
+"restoring" = "Restaurando...";
+
+// MARK: - Settings
+"change_photo" = "Cambiar foto";
+"settings_title" = "Ajustes";
+"appearance" = "Apariencia";
+"language" = "Idioma";
+"account" = "Cuenta";
+"sign_out" = "Cerrar sesión";
+"sign_out_confirm" = "¿Estás seguro de que quieres cerrar sesión?";
+"profile_updated" = "Perfil actualizado exitosamente";
+"app_version" = "Versión";
+"change_password" = "Cambiar Contraseña";
+"dark_mode" = "Modo oscuro";
+"about" = "Acerca de";
+"privacy_policy" = "Política de privacidad";
+"terms_of_service" = "Términos de servicio";
+
+// MARK: - Theme Options
+"theme_light" = "Claro";
+"theme_dark" = "Oscuro";
+"theme_system" = "Sistema";
+
+// MARK: - General
+"loading" = "Cargando...";
+"error_generic" = "Algo salió mal. Por favor inténtalo de nuevo.";
+"save" = "Guardar";
+"cancel" = "Cancelar";
+"done" = "Listo";
+"ok" = "OK";
+"error" = "Error";
+"success" = "Éxito";
+
+// MARK: - Validation
+"invalid_email" = "Por favor ingresa un correo electrónico válido";
+"weak_password" = "La contraseña debe tener al menos 8 caracteres con una mayúscula, un número y un carácter especial";
+"invalid_credentials" = "Correo o contraseña incorrectos. Por favor inténtalo de nuevo.";
+"empty_name" = "El nombre no puede estar vacío";

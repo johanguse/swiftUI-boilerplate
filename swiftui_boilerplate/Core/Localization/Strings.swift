@@ -78,6 +78,13 @@ enum LocalizationKey: String {
     case location = "location"
     case jobTitle = "job_title"
 
+    // Subscription / Purchases
+    case subscription = "subscription"
+    case upgradeToPro = "upgrade_to_pro"
+    case proActive = "pro_active"
+    case restorePurchases = "restore_purchases"
+    case restoring = "restoring"
+
     // Settings
     case changePhoto = "change_photo"
     case settingsTitle = "settings_title"

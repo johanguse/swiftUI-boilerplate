@@ -1,6 +1,6 @@
 # SwiftUI Boilerplate
 
-A production-ready SwiftUI boilerplate with **Clean Architecture**, **FastAPI backend integration**, full **authentication flow**, **onboarding**, **Firebase-ready analytics & crash reporting**, **push notifications**, **theme switching**, and **bilingual (EN/TR) localization** — built for iOS 17.5+.
+A production-ready SwiftUI boilerplate with **Clean Architecture**, **FastAPI backend integration**, full **authentication flow**, **onboarding**, **Firebase-ready analytics & crash reporting**, **RevenueCat-ready in-app purchases**, **push notifications**, **theme switching**, and **multilingual (EN/TR/ES/PT) localization** — built for iOS 17.5+.
 
 ---
 
@@ -13,7 +13,9 @@ A production-ready SwiftUI boilerplate with **Clean Architecture**, **FastAPI ba
 - **User list** — Paginated list with skeleton loading and detail view
 - **Settings** — Expo-style settings screen with edit profile, change password, theme toggle, language picker
 - **Theme switching** — Light / Dark / System with instant preview
-- **Localization** — English and Turkish, switchable at runtime without restart
+- **Localization** — English, Turkish, Spanish, Portuguese — switchable at runtime without restart
+- **In-app purchases** — `PurchaseManager` with RevenueCat integration; no-op when SDK not linked
+- **Paywall** — `RevenueCatUI.PaywallView` when linked; clean placeholder otherwise
 - **Analytics** — Protocol-driven; ships with no-op implementation; drops in Firebase with zero code changes
 - **Crash reporting** — Same pattern as analytics; Firebase-ready
 - **Push notifications** — APNs + optional FCM via Firebase; token synced to backend
@@ -69,7 +71,9 @@ swiftui_boilerplate/
 │   │   └── UserCache.swift            # Keychain-backed user profile cache
 │   ├── Config/
 │   │   ├── APIConfig.swift            # Backend base URL (gitignored — copy from .sample)
-│   │   └── APIConfig.swift.sample     # Template to copy and configure
+│   │   ├── APIConfig.swift.sample     # Template to copy and configure
+│   │   ├── RevenueCatConfig.swift     # RC API key (gitignored — copy from .sample)
+│   │   └── RevenueCatConfig.swift.sample  # Template to copy and configure
 │   ├── DI/
 │   │   └── AppContainer.swift         # Dependency injection container
 │   ├── Extensions/
@@ -89,6 +93,7 @@ swiftui_boilerplate/
 │   │   ├── HapticsManager.swift       # UIFeedbackGenerator helpers
 │   │   ├── NotificationService.swift  # APNs / FCM token management
 │   │   ├── OnboardingManager.swift    # UserDefaults-backed onboarding state
+│   │   ├── PurchaseManager.swift      # RevenueCat in-app purchases (no-op without SDK)
 │   │   └── TokenManager.swift         # JWT token in Keychain
 │   └── Theme/
 │       └── ThemeManager.swift         # Light / Dark / System theme
@@ -132,6 +137,8 @@ swiftui_boilerplate/
 │   │   └── UserAvatarView.swift
 │   ├── Launch/
 │   │   └── LaunchView.swift           # Animated splash screen
+│   ├── Paywall/
+│   │   └── PaywallView.swift          # RevenueCatUI paywall or placeholder
 │   ├── Main/
 │   │   ├── Home/
 │   │   │   ├── HomeView.swift         # Dashboard with skeleton loading
@@ -149,6 +156,8 @@ swiftui_boilerplate/
 │
 ├── en.lproj/Localizable.strings       # English strings
 ├── tr.lproj/Localizable.strings       # Turkish strings
+├── es.lproj/Localizable.strings       # Spanish strings
+├── pt.lproj/Localizable.strings       # Portuguese strings
 └── swiftui_boilerplateApp.swift       # @main entry point
 ```
 
@@ -283,6 +292,81 @@ Without Firebase, the raw APNs token is synced directly.
 
 ---
 
+## RevenueCat (Optional)
+
+RevenueCat is fully optional. The project compiles and runs without it — `PurchaseManager` no-ops and a placeholder paywall is shown.
+
+### Without RevenueCat (default)
+
+`PurchaseManager` compiles with empty `#else` branches:
+- `isProUser` is always `false`
+- `restorePurchases()` does nothing
+- `PaywallView` shows a "Add RevenueCat packages" placeholder
+
+### Enabling RevenueCat
+
+1. Copy the config template and fill in your API key:
+
+```bash
+cp swiftui_boilerplate/Core/Config/RevenueCatConfig.swift.sample \
+   swiftui_boilerplate/Core/Config/RevenueCatConfig.swift
+```
+
+Edit `RevenueCatConfig.swift`:
+
+```swift
+enum RevenueCatConfig {
+    static let apiKey           = "appl_xxxxxxxxxxxxxxxxxxxx"  // Apple platform key
+    static let proEntitlementId = "pro"                        // match your RC dashboard
+}
+```
+
+> `RevenueCatConfig.swift` is gitignored — never committed.
+
+2. Add the Swift Package in Xcode:
+   - **File → Add Package Dependencies**
+   - URL: `https://github.com/RevenueCat/purchases-ios`
+   - Select: **RevenueCat** + **RevenueCatUI** (pre-built paywall UI)
+
+Once the packages are linked, `#if canImport(RevenueCat)` activates automatically:
+- `Purchases.configure(withAPIKey:)` runs at app launch
+- Sign-in calls `Purchases.shared.logIn(userId)` to associate purchases with your user
+- Sign-out calls `Purchases.shared.logOut()`
+- `PurchaseManager.isProUser` reflects the `pro` entitlement in real time
+
+```swift
+// PaywallView uses the real RC paywall automatically:
+typealias AppPaywallView = RevenueCatUI.PaywallView  // (conceptually)
+```
+
+No other code changes needed.
+
+### Paywall presentation
+
+The Settings screen includes a **Subscription** section that:
+- Shows **"Upgrade to Pro"** (opens paywall sheet) when the user is not subscribed
+- Shows **"Pro Active ✓"** when the `pro` entitlement is active
+- Always shows **"Restore Purchases"** to handle reinstalls and device transfers
+
+To present the paywall from anywhere in your app:
+
+```swift
+// From any view that has access to AppContainer:
+container.purchaseManager.isPresentingPaywall = true
+```
+
+### Choosing a payment solution
+
+| Option | Best for | Trade-off |
+|--------|----------|-----------|
+| **RevenueCat** ✓ | Most apps — cross-platform, great dashboard, A/B testing | Free up to $2.5M tracked revenue, then 1% |
+| **Adapty** | High-volume apps needing cheaper pricing | Smaller community, less mature |
+| **StoreKit (native)** | Zero dependencies, full control | You build everything: UI, validation, analytics |
+
+This boilerplate ships with RevenueCat. To use StoreKit directly, remove `PurchaseManager` and use `StoreKit.Product` / `StoreKit.Transaction` APIs.
+
+---
+
 ## Tech Stack
 
 | Category | Technology |
@@ -298,7 +382,8 @@ Without Firebase, the raw APNs token is synced directly.
 | Analytics | Protocol-based; Firebase-ready |
 | Crash reporting | Protocol-based; Firebase-ready |
 | Push notifications | APNs / FCM via Firebase |
-| Localization | Custom `LocalizationManager` (EN / TR) |
+| In-app purchases | `PurchaseManager`; RevenueCat-ready |
+| Localization | Custom `LocalizationManager` (EN / TR / ES / PT) |
 | Minimum iOS | 17.5 |
 
 ---
@@ -317,8 +402,22 @@ extension Color {
 
 ### Add a language
 
-1. Add a new `*.lproj/Localizable.strings` file in Xcode
-2. Add the locale to `AppLanguage` in `LocalizationManager.swift`
+The boilerplate ships with **English, Turkish, Spanish, and Portuguese**.
+
+1. Create `xx.lproj/Localizable.strings` (copy from `en.lproj` and translate)
+2. Add the locale in Xcode: select the project → **Info** tab → **Localizations** → **+**
+3. Add a new case to `AppLanguage` in `LocalizationManager.swift`:
+
+```swift
+case french = "fr"
+
+var displayName: String {
+    // ...
+    case .french: return "Français"
+}
+var shortCode: String { /* ... case .french: return "FR" */ }
+var flag: String      { /* ... case .french: return "🇫🇷" */ }
+```
 
 ### Add a new screen
 

@@ -1,0 +1,19 @@
+// Copy this file to RevenueCatConfig.swift and fill in your key.
+// RevenueCatConfig.swift is gitignored — never committed.
+//
+// To enable RevenueCat:
+//   1. Copy:  cp RevenueCatConfig.swift.sample RevenueCatConfig.swift
+//   2. Paste your API key below (Apple platform key from RC dashboard)
+//   3. In Xcode → File → Add Package Dependencies:
+//        https://github.com/RevenueCat/purchases-ios
+//      Select: RevenueCat  +  RevenueCatUI  (for pre-built paywall)
+//   4. Build — #if canImport(RevenueCat) activates automatically
+//
+// Entitlement ID:
+//   Match proEntitlementId with the identifier in your RC dashboard
+//   (default: "pro"). Update if you named it differently.
+
+enum RevenueCatConfig {
+    static let apiKey          = "appl_xxxxxxxxxxxxxxxxxxxx"
+    static let proEntitlementId = "pro"
+}
