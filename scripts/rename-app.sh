@@ -54,10 +54,13 @@ Example:
   ./scripts/rename-app.sh --bundle-id com.acme.superapp --name "Super App"
 
 After running:
-  1. Create swiftui_boilerplate/Core/Config/APIConfig.swift from the .sample file
-  2. Open Xcode — rename the target and scheme if desired (Product → Scheme → Manage Schemes)
-  3. Remove the Supabase Swift Package (File → Packages → Reset Package Caches, then
-     remove supabase-swift from project settings → Package Dependencies)
+  1. Copy the API config template and fill in your backend URL:
+       cp swiftui_boilerplate/Core/Config/APIConfig.swift.sample \\
+          swiftui_boilerplate/Core/Config/APIConfig.swift
+  2. Open Xcode — rename the target and scheme if desired:
+       Product → Scheme → Manage Schemes
+  3. (Optional) Add Firebase: drop GoogleService-Info.plist into the Xcode project
+       and add the Firebase Swift Package (see README for details)
 EOF
   exit 0
 fi
@@ -129,9 +132,11 @@ PYEOF
 
 echo ""
 echo "Done. Next steps:"
-echo "  1. cp swiftui_boilerplate/Core/Config/APIConfig.swift.sample \\"
+echo "  1. Configure your backend URL:"
+echo "     cp swiftui_boilerplate/Core/Config/APIConfig.swift.sample \\"
 echo "        swiftui_boilerplate/Core/Config/APIConfig.swift"
-echo "     (then fill in your backend URL)"
-echo "  2. Open Xcode and remove the Supabase package dependency:"
-echo "     Project settings → Package Dependencies → remove supabase-swift"
-echo "  3. Rename the Xcode target/scheme if desired (Xcode GUI only)"
+echo "     # Then edit APIConfig.swift and set your baseURL"
+echo "  2. Open Xcode — rename the target/scheme if desired (Xcode GUI only)"
+echo "  3. (Optional) Add Firebase: drop GoogleService-Info.plist into the project"
+echo "     and add the Firebase Swift Package"
+echo "  4. Build and run"

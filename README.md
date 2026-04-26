@@ -1,45 +1,33 @@
 # SwiftUI Boilerplate
 
-A production-ready SwiftUI boilerplate with **Clean Architecture**, **Supabase** backend integration, full **authentication flow**, **theme switching**, and **bilingual (EN/TR) localization** — built for iOS 17.5+.
-
----
-
-## Screenshots
-
-> _Replace the placeholders below with your actual screenshots._
-
-| Welcome                             | Sign In                           |
-| ----------------------------------- | --------------------------------- |
-| ![Welcome](screenshots/welcome.png) | ![SignIn](screenshots/signin.png) |
-
-| Sign Up                           | Home                          | User Detail                       |
-| --------------------------------- | ----------------------------- | --------------------------------- |
-| ![SignUp](screenshots/signup.png) | ![Home](screenshots/home.png) | ![Detail](screenshots/detail.png) |
-
-| Settings                              | Edit Profile                          | Dark Mode                          |
-| ------------------------------------- | ------------------------------------- | ---------------------------------- |
-| ![Settings](screenshots/settings.png) | ![Edit](screenshots/edit_profile.png) | ![Dark](screenshots/dark_mode.png) |
+A production-ready SwiftUI boilerplate with **Clean Architecture**, **FastAPI backend integration**, full **authentication flow**, **onboarding**, **Firebase-ready analytics & crash reporting**, **push notifications**, **theme switching**, and **bilingual (EN/TR) localization** — built for iOS 17.5+.
 
 ---
 
 ## Features
 
-- **Authentication** — Sign in, sign up, forgot password (Supabase Auth)
-- **Session persistence** — Cache-first restore via Keychain; silent background token refresh
-- **Profile management** — Edit name, bio, job title, location, avatar upload
-- **User list** — Paginated list with detail view
+- **Authentication** — Sign in, sign up, forgot password, change password
+- **Session persistence** — Cache-first restore via Keychain; background token validation
+- **Onboarding** — 3-page animated onboarding flow with skip support
+- **Profile management** — Edit name, bio, job title, location, avatar upload (with compression)
+- **User list** — Paginated list with skeleton loading and detail view
+- **Settings** — Expo-style settings screen with edit profile, change password, theme toggle, language picker
 - **Theme switching** — Light / Dark / System with instant preview
-- **Localization** — English and Turkish, switchable at runtime
-- **Splash screen** — Animated launch screen with loading dots
+- **Localization** — English and Turkish, switchable at runtime without restart
+- **Analytics** — Protocol-driven; ships with no-op implementation; drops in Firebase with zero code changes
+- **Crash reporting** — Same pattern as analytics; Firebase-ready
+- **Push notifications** — APNs + optional FCM via Firebase; token synced to backend
+- **Haptics** — `HapticsManager` for success/error feedback
+- **Skeleton loading** — Shimmer effect components for async content
+- **Splash screen** — Animated launch screen
 - **Clean Architecture** — Domain, Data, Presentation layers fully separated
 - **Dependency injection** — Environment-based `AppContainer`
-- **Unit tests** — Mock repositories, DTO encoding tests, error-path tests
 
 ---
 
 ## Architecture
 
-The project follows **Clean Architecture** with an **MVVM** presentation pattern.
+The project follows **Clean Architecture** with an **MVVM** presentation pattern using the `@Observable` macro (iOS 17+).
 
 ```
 ┌─────────────────────────────────────────────────┐
@@ -51,63 +39,73 @@ The project follows **Clean Architecture** with an **MVVM** presentation pattern
 │        Entities · Use Cases · Protocols         │
 ├─────────────────────────────────────────────────┤
 │                     Data                        │
-│     Repositories · DataSource · DTOs            │
+│     Repositories · APIDataSource · DTOs         │
 ├─────────────────────────────────────────────────┤
 │                     Core                        │
-│   DI · Navigation · Theme · Cache · Services    │
+│  DI · Navigation · Theme · Cache · Services     │
 └─────────────────────────────────────────────────┘
 ```
 
 ### Data flow
 
 ```
-View  →  ViewModel  →  UseCase  →  Repository (Protocol)
-                                        ↓
-                                  DataSource (Supabase)
+View → ViewModel → UseCase → Repository (Protocol)
+                                    ↓
+                             APIDataSource (URLSession)
+                                    ↓
+                          FastAPI Backend (REST)
 ```
 
 ---
 
-## File Structure
+## Project Structure
 
 ```
 swiftui_boilerplate/
 │
 ├── Core/
+│   ├── AppDelegate.swift              # UIApplicationDelegate; Firebase + APNs wiring
 │   ├── Cache/
-│   │   └── UserCache.swift               # Keychain-based session cache
+│   │   └── UserCache.swift            # Keychain-backed user profile cache
 │   ├── Config/
-│   │   └── SupabaseConfig.swift          # URL & anon key (from .xcconfig)
+│   │   ├── APIConfig.swift            # Backend base URL (gitignored — copy from .sample)
+│   │   └── APIConfig.swift.sample     # Template to copy and configure
 │   ├── DI/
-│   │   └── AppContainer.swift            # Dependency injection container
+│   │   └── AppContainer.swift         # Dependency injection container
 │   ├── Extensions/
-│   │   ├── Color+Extensions.swift        # Semantic color palette
-│   │   ├── String+Extensions.swift       # Validation helpers
-│   │   └── View+Extensions.swift         # UI utility modifiers
+│   │   ├── Color+Extensions.swift     # Semantic color palette
+│   │   ├── String+Extensions.swift    # Validation helpers (email, trimming)
+│   │   └── View+Extensions.swift      # UI utility modifiers
 │   ├── Localization/
-│   │   ├── LocalizationManager.swift     # Runtime language switching
-│   │   └── Strings.swift                 # Localization key enum
+│   │   ├── LocalizationManager.swift  # Runtime language switching
+│   │   └── Strings.swift              # Localization key enum
 │   ├── Navigation/
-│   │   ├── AppRouter.swift               # NavigationStack path manager
-│   │   └── Route.swift                   # AuthRoute / HomeRoute enums
+│   │   ├── AppRouter.swift            # NavigationStack path manager
+│   │   └── Route.swift                # AuthRoute / HomeRoute / SettingsRoute enums
 │   ├── Services/
-│   │   └── SupabaseService.swift         # Supabase client singleton
+│   │   ├── AnalyticsService.swift     # Protocol + NullAnalyticsService (no-op)
+│   │   ├── CrashReporter.swift        # Protocol + NullCrashReporter (no-op)
+│   │   ├── FirebaseService.swift      # Typealias: Firebase or Null implementation
+│   │   ├── HapticsManager.swift       # UIFeedbackGenerator helpers
+│   │   ├── NotificationService.swift  # APNs / FCM token management
+│   │   ├── OnboardingManager.swift    # UserDefaults-backed onboarding state
+│   │   └── TokenManager.swift         # JWT token in Keychain
 │   └── Theme/
-│       └── ThemeManager.swift            # Light / Dark / System theme
+│       └── ThemeManager.swift         # Light / Dark / System theme
 │
 ├── Data/
 │   ├── DataSources/
-│   │   └── SupabaseDataSource.swift      # All Supabase API calls
+│   │   └── APIDataSource.swift        # All HTTP calls (URLSession + JWT injection)
 │   ├── DTOs/
-│   │   └── SupabaseProfileDTO.swift      # Codable profile model
+│   │   └── APIUserDTO.swift           # Decodable user model (snake_case ↔ camelCase)
 │   └── Repositories/
-│       ├── SupabaseAuthRepository.swift
-│       └── SupabaseUserRepository.swift
+│       ├── APIAuthRepository.swift    # Auth operations
+│       └── APIUserRepository.swift    # User/profile operations
 │
 ├── Domain/
 │   ├── Entities/
-│   │   ├── AppError.swift                # Typed error model
-│   │   └── User.swift                    # Core user entity
+│   │   ├── AppError.swift             # Typed error enum
+│   │   └── User.swift                 # Core user entity
 │   ├── Repositories/
 │   │   ├── AuthRepositoryProtocol.swift
 │   │   └── UserRepositoryProtocol.swift
@@ -120,7 +118,7 @@ swiftui_boilerplate/
 │
 ├── Presentation/
 │   ├── Auth/
-│   │   ├── AuthFlowView.swift
+│   │   ├── AuthFlowView.swift         # NavigationStack root for auth
 │   │   ├── ForgotPassword/
 │   │   ├── SignIn/
 │   │   ├── SignUp/
@@ -130,217 +128,227 @@ swiftui_boilerplate/
 │   │   ├── LoadingOverlay.swift
 │   │   ├── PrimaryButton.swift
 │   │   ├── SecondaryButton.swift
+│   │   ├── SkeletonBox.swift          # Shimmer skeleton loading components
 │   │   └── UserAvatarView.swift
 │   ├── Launch/
-│   │   └── LaunchView.swift              # Animated splash screen
-│   └── Main/
-│       ├── Home/
-│       ├── MainTabView.swift
-│       └── Settings/
+│   │   └── LaunchView.swift           # Animated splash screen
+│   ├── Main/
+│   │   ├── Home/
+│   │   │   ├── HomeView.swift         # Dashboard with skeleton loading
+│   │   │   ├── HomeViewModel.swift
+│   │   │   ├── UserDetailView.swift
+│   │   │   └── UserRowView.swift
+│   │   ├── MainTabView.swift
+│   │   └── Settings/
+│   │       ├── ChangePasswordView.swift
+│   │       ├── ChangePasswordViewModel.swift
+│   │       ├── SettingsView.swift     # Expo-style settings layout
+│   │       └── SettingsViewModel.swift
+│   └── Onboarding/
+│       └── OnboardingView.swift       # 3-page animated onboarding
 │
-├── en.lproj/                             # English strings
-├── tr.lproj/                             # Turkish strings
-└── swiftui_boilerplateApp.swift          # @main entry point
+├── en.lproj/Localizable.strings       # English strings
+├── tr.lproj/Localizable.strings       # Turkish strings
+└── swiftui_boilerplateApp.swift       # @main entry point
 ```
 
 ---
 
-## Tech Stack
+## Quick Start
 
-| Category         | Technology                             |
-| ---------------- | -------------------------------------- |
-| Language         | Swift 6                                |
-| UI Framework     | SwiftUI                                |
-| State Management | `@Observable` (Observation framework)  |
-| Backend          | [Supabase](https://supabase.com)       |
-| Auth             | Supabase Auth                          |
-| Database         | Supabase PostgREST                     |
-| Storage          | Supabase Storage (avatar uploads)      |
-| Session Cache    | Keychain (`Security` framework)        |
-| Navigation       | `NavigationStack` + path-based routing |
-| Localization     | Custom `LocalizationManager` (EN / TR) |
-| Minimum iOS      | 17.5                                   |
+### 1. Rename the app
 
----
-
-## Prerequisites
-
-- Xcode 16+
-- iOS 17.5+ device or simulator
-- A [Supabase](https://supabase.com) project
-
----
-
-## Supabase Setup
-
-### 1. Create the `profiles` table
-
-Run this in the Supabase SQL editor:
-
-```sql
-create table public.profiles (
-  id          uuid primary key references auth.users on delete cascade,
-  full_name   text,
-  username    text unique,
-  email       text,
-  avatar_url  text,
-  job_title   text,
-  location    text,
-  bio         text,
-  followers_count integer default 0,
-  following_count integer default 0
-);
-
--- Auto-create a profile row when a user signs up
-create or replace function public.handle_new_user()
-returns trigger as $$
-begin
-  insert into public.profiles (id, full_name, email)
-  values (
-    new.id,
-    new.raw_user_meta_data->>'full_name',
-    new.email
-  );
-  return new;
-end;
-$$ language plpgsql security definer;
-
-create trigger on_auth_user_created
-  after insert on auth.users
-  for each row execute procedure public.handle_new_user();
-```
-
-### 2. Create the `avatars` storage bucket
-
-```sql
-insert into storage.buckets (id, name, public)
-values ('avatars', 'avatars', true);
-
--- Allow authenticated users to upload their own avatar
-create policy "Users can upload own avatar"
-  on storage.objects for insert
-  to authenticated
-  with check (bucket_id = 'avatars' and auth.uid()::text = (storage.foldername(name))[1]);
-
-create policy "Avatar images are publicly accessible"
-  on storage.objects for select
-  to public
-  using (bucket_id = 'avatars');
-```
-
-### 3. Enable Row Level Security (optional but recommended)
-
-```sql
-alter table public.profiles enable row level security;
-
-create policy "Profiles are viewable by authenticated users"
-  on public.profiles for select
-  to authenticated using (true);
-
-create policy "Users can update own profile"
-  on public.profiles for update
-  to authenticated using (auth.uid() = id);
-```
-
----
-
-## Installation
-
-### 1. Clone the repository
+Run the rename script to update the bundle ID and display name in one step:
 
 ```bash
-git clone https://github.com/yourusername/swiftui-boilerplate.git
-cd swiftui-boilerplate
+./scripts/rename-app.sh \
+  --bundle-id com.yourcompany.yourapp \
+  --name "Your App Name"
+
+# Optional: also set the version
+./scripts/rename-app.sh \
+  --bundle-id com.yourcompany.yourapp \
+  --name "Your App Name" \
+  --version 1.0.0
 ```
 
-### 2. Add your Supabase credentials
+What it updates automatically:
+- `PRODUCT_BUNDLE_IDENTIFIER` in `project.pbxproj` (main target, Tests, UITests)
+- `INFOPLIST_KEY_CFBundleDisplayName` (home screen name)
+- `MARKETING_VERSION` (if `--version` provided)
 
-Create a `Secrets.xcconfig` file in the project root (it is already in `.gitignore`):
+To rename the Xcode **target and scheme** (optional): open Xcode → Product → Scheme → Manage Schemes.
 
+### 2. Configure the backend URL
+
+```bash
+cp swiftui_boilerplate/Core/Config/APIConfig.swift.sample \
+   swiftui_boilerplate/Core/Config/APIConfig.swift
 ```
-SUPABASE_URL = https://your-project-ref.supabase.co
-SUPABASE_ANON_KEY = your-anon-key
-```
 
-Or update `Core/Config/SupabaseConfig.swift` directly:
+Edit `APIConfig.swift`:
 
 ```swift
-enum SupabaseConfig {
-    static let projectURL = "https://your-project-ref.supabase.co"
-    static let anonKey    = "your-anon-key"
+enum APIConfig {
+    static let baseURL  = "https://api.yourapp.com"  // your backend
+    static let apiPrefix = "/api/v1"
+
+    static func authPath(_ endpoint: String) -> String { apiPrefix + "/auth" + endpoint }
+    static func apiPath(_ endpoint: String) -> String  { apiPrefix + endpoint }
 }
 ```
 
-### 3. Add Supabase Swift SDK via SPM
+> `APIConfig.swift` is gitignored — never committed.
 
-In Xcode:
-
-1. **File → Add Package Dependencies...**
-2. Enter the URL: `https://github.com/supabase/supabase-swift`
-3. Set the version rule to **Up to Next Major** from `2.0.0`
-4. Add the **Supabase** product to your target
-
-### 4. Open and run
+### 3. Open and run
 
 ```bash
 open swiftui_boilerplate.xcodeproj
 ```
 
-Select your target device/simulator and press **⌘R**.
+Select your simulator or device, press **⌘R**.
+
+---
+
+## Backend
+
+This boilerplate is designed to work with the companion **FastAPI backend** (`/backend`).
+
+### Required endpoints
+
+| Method | Path | Description |
+|--------|------|-------------|
+| `POST` | `/api/v1/auth/sign-in/email` | Sign in → returns `{ user, session: { token, expiresAt } }` |
+| `POST` | `/api/v1/auth/sign-up/email` | Sign up → same response shape |
+| `POST` | `/api/v1/auth/sign-out` | Sign out |
+| `GET`  | `/api/v1/auth/session` | Validate token → returns `{ user, session: { token, expiresAt } }` |
+| `POST` | `/api/v1/auth/forgot-password` | Send reset email |
+| `GET`  | `/api/v1/users/me` | Current user profile |
+| `PATCH`| `/api/v1/users/me` | Update profile |
+| `POST` | `/api/v1/users/me/avatar` | Upload avatar (multipart/form-data) |
+| `POST` | `/api/v1/users/me/change-password` | Change password `{ current_password, new_password }` |
+| `POST` | `/api/v1/users/me/push-token` | Register push token `{ token, platform }` |
+| `GET`  | `/api/v1/users` | Paginated user list |
+
+### Authentication
+
+All authenticated requests send `Authorization: Bearer <token>`. The JWT is stored in the Keychain via `TokenManager` and attached by `APIClient.inject(_:)`.
+
+### Session lifetime
+
+The backend issues JWTs with a configurable lifetime (default 1 hour). To increase it for development, set in `backend/.env`:
+
+```env
+JWT_LIFETIME_SECONDS=2592000   # 30 days
+```
+
+---
+
+## Firebase (Optional)
+
+Firebase is fully optional. The project compiles and runs without it using no-op implementations.
+
+### Without Firebase (default)
+
+`FirebaseService.swift` resolves to:
+```swift
+typealias AppAnalyticsService = NullAnalyticsService  // no-op
+typealias AppCrashReporter    = NullCrashReporter     // no-op
+```
+
+### Enabling Firebase
+
+1. Create an iOS app in the [Firebase Console](https://console.firebase.google.com)
+2. Download `GoogleService-Info.plist` and drag it into the Xcode project (next to `Info.plist`)
+3. Add the Firebase Swift Package in Xcode:
+   - **File → Add Package Dependencies**
+   - URL: `https://github.com/firebase/firebase-ios-sdk`
+   - Select: `FirebaseAnalytics`, `FirebaseCrashlytics`, `FirebaseMessaging`
+
+Once the package is linked, `#if canImport(FirebaseCore)` activates automatically:
+```swift
+typealias AppAnalyticsService = FirebaseAnalyticsService  // real Firebase
+typealias AppCrashReporter    = FirebaseCrashReporter     // real Crashlytics
+```
+
+No other code changes needed.
+
+### Push notifications with Firebase (FCM)
+
+When Firebase is linked, the APNs ↔ FCM bridge activates in `AppDelegate`:
+- APNs device token → handed to `Messaging.messaging().apnsToken`
+- FCM registration token → synced to backend via `POST /users/me/push-token`
+
+Without Firebase, the raw APNs token is synced directly.
+
+---
+
+## Tech Stack
+
+| Category | Technology |
+|---|---|
+| Language | Swift 6 |
+| UI Framework | SwiftUI |
+| State Management | `@Observable` (Observation framework) |
+| Networking | `URLSession` async/await |
+| Backend | Python FastAPI (REST + JWT) |
+| Token storage | Keychain (`Security` framework) |
+| User cache | Keychain (`UserCache`) |
+| Navigation | `NavigationStack` + path-based routing |
+| Analytics | Protocol-based; Firebase-ready |
+| Crash reporting | Protocol-based; Firebase-ready |
+| Push notifications | APNs / FCM via Firebase |
+| Localization | Custom `LocalizationManager` (EN / TR) |
+| Minimum iOS | 17.5 |
 
 ---
 
 ## Customization
 
-### Branding colors
+### Brand colors
 
 Edit `Core/Extensions/Color+Extensions.swift`:
 
 ```swift
 extension Color {
-    static let appPrimary   = Color.indigo  // ← change to your brand color
-    static let appSecondary = Color.purple
+    static let appPrimary = Color.indigo   // ← your brand color
 }
 ```
 
-### App name & copy
+### Add a language
 
-Update localization strings in `en.lproj/Localizable.strings` and `tr.lproj/Localizable.strings`. All UI text is driven through `LocalizationKey` enum in `Core/Localization/Strings.swift`.
+1. Add a new `*.lproj/Localizable.strings` file in Xcode
+2. Add the locale to `AppLanguage` in `LocalizationManager.swift`
 
-### Adding a new screen
+### Add a new screen
 
-1. Create `Presentation/YourFeature/YourView.swift` and `YourViewModel.swift`
-2. Add a route case to `Core/Navigation/Route.swift`
-3. Handle navigation in `AppRouter`
+1. Create `Presentation/YourFeature/YourView.swift` + `YourViewModel.swift`
+2. Add a case to the relevant route enum in `Core/Navigation/Route.swift`
+3. Add a `navigationDestination` in the appropriate flow view
+4. Add a `navigate(to:)` method in `AppRouter` if needed
 
----
+### Add an analytics event
 
-## Running Tests
+Conform to `AnalyticsService` in `Core/Services/AnalyticsService.swift` and call via `container.analytics`:
 
-```bash
-⌘U   # Run all tests in Xcode
+```swift
+container.analytics.trackEvent("button_tapped", parameters: ["name": "subscribe"])
 ```
-
-Tests live in `swiftui_boilerplateTests/`. They use lightweight mock repositories (`MockAuthRepository`, `MockUserRepository`) and do not require a live Supabase connection.
-
-**Covered cases:**
-
-- DTO encoding (only editable fields are sent to API)
-- Profile update with optional field clearing
-- Sign-out routing when the repository throws an error
 
 ---
 
 ## Project Conventions
 
-| Convention           | Detail                                                                          |
-| -------------------- | ------------------------------------------------------------------------------- |
-| State management     | `@Observable` — no `ObservableObject` / `@StateObject`                          |
-| ViewModels           | Instantiated by parent views; passed down as dependencies                       |
-| Error handling       | `AppError` typed enum; localized messages via `LocalizationManager`             |
-| Async                | `async/await` throughout; no Combine                                            |
-| Dependency injection | `AppContainer` via SwiftUI `Environment`                                        |
-| Navigation           | `NavigationStack` with `[Route]` path arrays; no `NavigationLink(destination:)` |
+| Convention | Detail |
+|---|---|
+| State management | `@Observable` — no `ObservableObject` / `@StateObject` |
+| `@State` properties | Always `private` |
+| Injected observables | `@Bindable` when bindings needed; plain `let` otherwise |
+| Async | `async/await` throughout; no Combine |
+| Error handling | `AppError` typed enum; localized via `LocalizationManager` |
+| Navigation | `NavigationStack` with `[Route]` path arrays |
+| Dependency injection | `AppContainer` via SwiftUI `@Environment` |
+| Token transport | `Authorization: Bearer` header, injected by `APIClient` |
 
 ---
 
