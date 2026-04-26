@@ -1,0 +1,113 @@
+// MARK: - Onboarding
+"onboarding_skip" = "Skip";
+"onboarding_next" = "Next";
+"onboarding_get_started" = "Get Started";
+"onboarding_welcome_title" = "Welcome";
+"onboarding_welcome_subtitle" = "Your all-in-one app to stay connected, productive, and in control.";
+"onboarding_features_title" = "Everything you need";
+"onboarding_features_subtitle" = "Powerful features built for modern users.";
+"onboarding_ready_title" = "You're all set!";
+"onboarding_ready_subtitle" = "Let's get started. Create an account or sign in to continue.";
+"feature_secure_title" = "Secure by default";
+"feature_secure_desc" = "Your data is encrypted and stored safely.";
+"feature_fast_title" = "Lightning fast";
+"feature_fast_desc" = "Optimised for speed on every device.";
+"feature_global_title" = "Multi-language";
+"feature_global_desc" = "Available in multiple languages worldwide.";
+
+// MARK: - Change Password
+"current_password" = "Current Password";
+"new_password" = "New Password";
+"confirm_new_password" = "Confirm New Password";
+"change_password_title" = "Change Password";
+"password_changed" = "Password changed successfully";
+"password_mismatch" = "Passwords do not match";
+
+// MARK: - Notifications
+"notifications_title" = "Stay in the loop";
+"notifications_subtitle" = "Enable notifications to get updates, alerts, and important messages.";
+"enable_notifications" = "Enable Notifications";
+"notifications_later" = "Maybe later";
+
+// MARK: - Welcome
+"welcome_title" = "Welcome Back";
+"welcome_subtitle" = "Sign in to continue or create a new account";
+"sign_in" = "Sign In";
+"sign_up" = "Sign Up";
+
+// MARK: - Sign In
+"email" = "Email";
+"password" = "Password";
+"forgot_password" = "Forgot Password?";
+"no_account" = "Don't have an account?";
+
+// MARK: - Sign Up
+"full_name" = "Full Name";
+"confirm_password" = "Confirm Password";
+"already_have_account" = "Already have an account?";
+"passwords_do_not_match" = "Passwords do not match";
+"create_account" = "Create Account";
+
+// MARK: - Forgot Password
+"forgot_password_title" = "Reset Password";
+"forgot_password_subtitle" = "Enter your email and we'll send you a reset link";
+"send_reset_link" = "Send Reset Link";
+"reset_link_sent" = "Reset link sent!";
+"reset_link_sent_subtitle" = "Check your email inbox for the password reset link.";
+"back_to_sign_in" = "Back to Sign In";
+
+// MARK: - Home
+"home_title" = "Home";
+"users" = "Users";
+"followers" = "Followers";
+"following" = "Following";
+"good_morning" = "Good morning";
+"good_afternoon" = "Good afternoon";
+"good_evening" = "Good evening";
+"people" = "People";
+"no_users_yet" = "No people yet";
+"my_profile" = "My Profile";
+
+// MARK: - Profile / Settings
+"profile_title" = "Profile";
+"edit_profile" = "Edit Profile";
+"bio" = "Bio";
+"location" = "Location";
+"job_title" = "Job Title";
+
+// MARK: - Settings
+"change_photo" = "Change Photo";
+"settings_title" = "Settings";
+"appearance" = "Appearance";
+"language" = "Language";
+"account" = "Account";
+"sign_out" = "Sign Out";
+"sign_out_confirm" = "Are you sure you want to sign out?";
+"profile_updated" = "Profile updated successfully";
+"app_version" = "Version";
+"change_password" = "Change Password";
+"dark_mode" = "Dark Mode";
+"about" = "About";
+"privacy_policy" = "Privacy Policy";
+"terms_of_service" = "Terms of Service";
+
+// MARK: - Theme Options
+"theme_light" = "Light";
+"theme_dark" = "Dark";
+"theme_system" = "System";
+
+// MARK: - General
+"loading" = "Loading...";
+"error_generic" = "Something went wrong. Please try again.";
+"save" = "Save";
+"cancel" = "Cancel";
+"done" = "Done";
+"ok" = "OK";
+"error" = "Error";
+"success" = "Success";
+
+// MARK: - Validation
+"invalid_email" = "Please enter a valid email address";
+"weak_password" = "Password must be at least 8 characters with an uppercase letter, a number, and a special character";
+"invalid_credentials" = "Invalid email or password. Please try again.";
+"empty_name" = "Name cannot be empty";

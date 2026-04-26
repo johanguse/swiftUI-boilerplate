@@ -1,0 +1,113 @@
+// MARK: - Başlangıç
+"onboarding_skip" = "Geç";
+"onboarding_next" = "İleri";
+"onboarding_get_started" = "Başla";
+"onboarding_welcome_title" = "Hoş Geldiniz";
+"onboarding_welcome_subtitle" = "Bağlantıda kalmak, üretken olmak ve her şeyi kontrol altında tutmak için tek uygulamanız.";
+"onboarding_features_title" = "İhtiyacınız olan her şey";
+"onboarding_features_subtitle" = "Modern kullanıcılar için güçlü özellikler.";
+"onboarding_ready_title" = "Hazırsınız!";
+"onboarding_ready_subtitle" = "Hadi başlayalım. Devam etmek için hesap oluşturun veya giriş yapın.";
+"feature_secure_title" = "Varsayılan olarak güvenli";
+"feature_secure_desc" = "Verileriniz şifrelenerek güvenli şekilde saklanır.";
+"feature_fast_title" = "Yıldırım hızında";
+"feature_fast_desc" = "Her cihazda hız için optimize edilmiştir.";
+"feature_global_title" = "Çok dilli";
+"feature_global_desc" = "Dünya genelinde birden fazla dilde kullanılabilir.";
+
+// MARK: - Şifre Değiştir
+"current_password" = "Mevcut Şifre";
+"new_password" = "Yeni Şifre";
+"confirm_new_password" = "Yeni Şifreyi Onayla";
+"change_password_title" = "Şifre Değiştir";
+"password_changed" = "Şifre başarıyla değiştirildi";
+"password_mismatch" = "Şifreler eşleşmiyor";
+
+// MARK: - Bildirimler
+"notifications_title" = "Gelişmelerden haberdar olun";
+"notifications_subtitle" = "Güncellemeler, uyarılar ve önemli mesajlar için bildirimleri etkinleştirin.";
+"enable_notifications" = "Bildirimleri Etkinleştir";
+"notifications_later" = "Belki daha sonra";
+
+// MARK: - Hoş Geldiniz
+"welcome_title" = "Tekrar Hoş Geldiniz";
+"welcome_subtitle" = "Devam etmek için giriş yapın veya yeni bir hesap oluşturun";
+"sign_in" = "Giriş Yap";
+"sign_up" = "Kayıt Ol";
+
+// MARK: - Giriş Yap
+"email" = "E-posta";
+"password" = "Şifre";
+"forgot_password" = "Şifremi Unuttum?";
+"no_account" = "Hesabınız yok mu?";
+
+// MARK: - Kayıt Ol
+"full_name" = "Ad Soyad";
+"confirm_password" = "Şifreyi Onayla";
+"already_have_account" = "Zaten hesabınız var mı?";
+"passwords_do_not_match" = "Şifreler eşleşmiyor";
+"create_account" = "Hesap Oluştur";
+
+// MARK: - Şifre Sıfırla
+"forgot_password_title" = "Şifre Sıfırla";
+"forgot_password_subtitle" = "E-postanızı girin, size sıfırlama bağlantısı gönderelim";
+"send_reset_link" = "Sıfırlama Bağlantısı Gönder";
+"reset_link_sent" = "Sıfırlama bağlantısı gönderildi!";
+"reset_link_sent_subtitle" = "Şifre sıfırlama bağlantısı için e-posta gelen kutunuzu kontrol edin.";
+"back_to_sign_in" = "Girişe Dön";
+
+// MARK: - Ana Sayfa
+"home_title" = "Ana Sayfa";
+"users" = "Kullanıcılar";
+"followers" = "Takipçi";
+"following" = "Takip";
+"good_morning" = "Günaydın";
+"good_afternoon" = "İyi günler";
+"good_evening" = "İyi akşamlar";
+"people" = "Kişiler";
+"no_users_yet" = "Henüz kimse yok";
+"my_profile" = "Profilim";
+
+// MARK: - Profil / Ayarlar
+"profile_title" = "Profil";
+"edit_profile" = "Profili Düzenle";
+"bio" = "Biyografi";
+"location" = "Konum";
+"job_title" = "İş Unvanı";
+
+// MARK: - Ayarlar
+"change_photo" = "Fotoğrafı Değiştir";
+"settings_title" = "Ayarlar";
+"appearance" = "Görünüm";
+"language" = "Dil";
+"account" = "Hesap";
+"sign_out" = "Çıkış Yap";
+"sign_out_confirm" = "Çıkış yapmak istediğinizden emin misiniz?";
+"profile_updated" = "Profil başarıyla güncellendi";
+"app_version" = "Sürüm";
+"change_password" = "Şifremi Değiştir";
+"dark_mode" = "Karanlık Mod";
+"about" = "Hakkında";
+"privacy_policy" = "Gizlilik Politikası";
+"terms_of_service" = "Kullanım Koşulları";
+
+// MARK: - Tema Seçenekleri
+"theme_light" = "Açık";
+"theme_dark" = "Koyu";
+"theme_system" = "Sistem";
+
+// MARK: - Genel
+"loading" = "Yükleniyor...";
+"error_generic" = "Bir şeyler ters gitti. Lütfen tekrar deneyin.";
+"save" = "Kaydet";
+"cancel" = "İptal";
+"done" = "Tamam";
+"ok" = "Tamam";
+"error" = "Hata";
+"success" = "Başarılı";
+
+// MARK: - Doğrulama
+"invalid_email" = "Lütfen geçerli bir e-posta adresi girin";
+"weak_password" = "Şifre en az 8 karakter, bir büyük harf, bir rakam ve bir özel karakter içermelidir";
+"invalid_credentials" = "Geçersiz e-posta veya şifre. Lütfen tekrar deneyin.";
+"empty_name" = "İsim boş olamaz";
