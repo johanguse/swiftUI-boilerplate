@@ -9,13 +9,11 @@ struct SettingsView: View {
 
     private let themeManager: ThemeManager
     private let localizationManager: LocalizationManager
-    private let authRepository: any AuthRepositoryProtocol
     private let purchaseManager: PurchaseManager
 
     init(container: AppContainer) {
         self.themeManager = container.themeManager
         self.localizationManager = container.localizationManager
-        self.authRepository = container.authRepository
         self.purchaseManager = container.purchaseManager
         _viewModel = State(initialValue: SettingsViewModel(
             themeManager: container.themeManager,
@@ -165,8 +163,8 @@ struct SettingsView: View {
                 label: localizationManager.localizedString(for: .changePassword)
             ) {
                 changePasswordViewModel = ChangePasswordViewModel(
-                    authRepository: authRepository,
-                    localization: localizationManager
+                    localization: localizationManager,
+                    authRepository: viewModel.authRepository
                 )
                 showChangePassword = true
             }

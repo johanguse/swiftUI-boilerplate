@@ -21,18 +21,17 @@ final class ChangePasswordViewModel {
         !confirmPassword.isEmpty && newPassword != confirmPassword
     }
 
-    private let authRepository: any AuthRepositoryProtocol
     private let localization: LocalizationManager
+    private let authRepository: any AuthRepositoryProtocol
 
-    init(authRepository: any AuthRepositoryProtocol, localization: LocalizationManager) {
-        self.authRepository = authRepository
+    init(localization: LocalizationManager, authRepository: any AuthRepositoryProtocol) {
         self.localization = localization
+        self.authRepository = authRepository
     }
 
     func changePassword() async -> Bool {
         guard isFormValid else { return false }
         isLoading = true
-        errorMessage = nil
         defer { isLoading = false }
         do {
             try await authRepository.changePassword(
@@ -44,7 +43,7 @@ final class ChangePasswordViewModel {
             return true
         } catch {
             HapticsManager.error()
-            errorMessage = localization.localizedError(error)
+            errorMessage = (error as? AppError)?.localizedDescription ?? error.localizedDescription
             return false
         }
     }

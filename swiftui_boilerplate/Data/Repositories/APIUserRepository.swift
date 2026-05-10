@@ -9,10 +9,6 @@ final class APIUserRepository: UserRepositoryProtocol {
         self.dataSource = dataSource
     }
 
-    func fetchUsers(limit: Int = 20, offset: Int = 0) async throws -> [User] {
-        try await dataSource.fetchUsers(limit: limit, offset: offset).map { $0.toDomain() }
-    }
-
     func updateProfile(_ user: User) async throws -> User {
         let updated = try await dataSource.updateProfile(user).toDomain()
         UserCache.save(updated)

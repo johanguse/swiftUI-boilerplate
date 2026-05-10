@@ -31,7 +31,7 @@ final class SettingsViewModel {
     let localizationManager: LocalizationManager
     private let updateProfileUseCase: UpdateProfileUseCase
     private let userRepository: any UserRepositoryProtocol
-    private let authRepository: any AuthRepositoryProtocol
+    let authRepository: any AuthRepositoryProtocol
     private let router: AppRouter
 
     // MARK: - Init

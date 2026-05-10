@@ -102,6 +102,88 @@ final class swiftui_boilerplateTests: XCTestCase {
     }
 }
 
+// MARK: - ChangePasswordViewModel Tests
+
+@MainActor
+final class ChangePasswordViewModelTests: XCTestCase {
+
+    func testChangePasswordCallsRepositoryWithCorrectPasswords() async {
+        let authRepository = MockAuthRepository(currentUser: nil)
+        let viewModel = ChangePasswordViewModel(
+            localization: LocalizationManager(),
+            authRepository: authRepository
+        )
+
+        viewModel.currentPassword = "oldpass123"
+        viewModel.newPassword = "newpass456"
+        viewModel.confirmPassword = "newpass456"
+
+        let success = await viewModel.changePassword()
+
+        XCTAssertTrue(success)
+        XCTAssertEqual(authRepository.changePasswordCallCount, 1)
+        XCTAssertEqual(authRepository.lastCurrentPassword, "oldpass123")
+        XCTAssertEqual(authRepository.lastNewPassword, "newpass456")
+        XCTAssertNil(viewModel.errorMessage)
+        XCTAssertNotNil(viewModel.successMessage)
+    }
+
+    func testChangePasswordSetsErrorMessageOnFailure() async {
+        let authRepository = MockAuthRepository(currentUser: nil)
+        authRepository.changePasswordError = AppError.unknown("Current password is incorrect.")
+        let viewModel = ChangePasswordViewModel(
+            localization: LocalizationManager(),
+            authRepository: authRepository
+        )
+
+        viewModel.currentPassword = "wrongpass"
+        viewModel.newPassword = "newpass456"
+        viewModel.confirmPassword = "newpass456"
+
+        let success = await viewModel.changePassword()
+
+        XCTAssertFalse(success)
+        XCTAssertEqual(authRepository.changePasswordCallCount, 1)
+        XCTAssertNotNil(viewModel.errorMessage)
+        XCTAssertNil(viewModel.successMessage)
+    }
+
+    func testChangePasswordReturnsFalseWhenFormInvalid() async {
+        let authRepository = MockAuthRepository(currentUser: nil)
+        let viewModel = ChangePasswordViewModel(
+            localization: LocalizationManager(),
+            authRepository: authRepository
+        )
+
+        // confirmPassword doesn't match
+        viewModel.currentPassword = "oldpass123"
+        viewModel.newPassword = "newpass456"
+        viewModel.confirmPassword = "different"
+
+        let success = await viewModel.changePassword()
+
+        XCTAssertFalse(success)
+        XCTAssertEqual(authRepository.changePasswordCallCount, 0)
+    }
+
+    func testChangePasswordReturnsFalseWhenNewPasswordTooShort() async {
+        let authRepository = MockAuthRepository(currentUser: nil)
+        let viewModel = ChangePasswordViewModel(
+            localization: LocalizationManager(),
+            authRepository: authRepository
+        )
+
+        viewModel.currentPassword = "oldpass123"
+        viewModel.newPassword = "short"
+        viewModel.confirmPassword = "short"
+
+        let success = await viewModel.changePassword()
+
+        XCTAssertFalse(success)
+        XCTAssertEqual(authRepository.changePasswordCallCount, 0)
+    }
+}
+
 @MainActor
 private final class MockAuthRepository: AuthRepositoryProtocol {
     var currentUser: User?
@@ -130,6 +212,20 @@ private final class MockAuthRepository: AuthRepositoryProtocol {
     }
 
     func resetPassword(email: String) async throws {}
+
+    var changePasswordError: Error?
+    private(set) var changePasswordCallCount = 0
+    private(set) var lastCurrentPassword: String?
+    private(set) var lastNewPassword: String?
+
+    func changePassword(currentPassword: String, newPassword: String) async throws {
+        changePasswordCallCount += 1
+        lastCurrentPassword = currentPassword
+        lastNewPassword = newPassword
+        if let changePasswordError {
+            throw changePasswordError
+        }
+    }
 
     func signOut() async throws {
         signOutCallCount += 1

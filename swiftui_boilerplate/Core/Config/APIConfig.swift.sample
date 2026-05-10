@@ -1,22 +1,18 @@
 // Copy this file to APIConfig.swift (which is gitignored) and fill in your values.
 //
-// Python FastAPI backend:
-//   baseURL  = "https://api.yourapp.com"
+// Cloudflare Workers backend (Hono):
+//   baseURL   = "https://your-worker.workers.dev"
 //   apiPrefix = "/api/v1"
-//   Auth endpoints: /auth/sign-in/email, /auth/sign-up/email, /auth/sign-out, /auth/session
+//   Auth endpoints: /api/v1/auth/login, /api/v1/auth/register, /api/v1/auth/logout
+//   User endpoints: /api/v1/users/me
 //
-// Bun/Hono backend:
-//   baseURL   = "https://api.yourapp.com"
-//   apiPrefix = ""
-//   Change authPath("/sign-in/email") → "/auth/jwt/login"
-//   Change authPath("/sign-up/email") → "/auth/register"
+// Local development: wrangler dev runs on http://127.0.0.1:8787
 
 enum APIConfig {
     // Base URL of your backend — no trailing slash.
-    static let baseURL = "https://your-api.example.com"
+    static let baseURL = "https://your-worker.workers.dev"
 
     // Path prefix for all API routes.
-    // Python FastAPI: "/api/v1"   Bun/Hono: ""
     static let apiPrefix = "/api/v1"
 
     static func authPath(_ endpoint: String) -> String { apiPrefix + "/auth" + endpoint }

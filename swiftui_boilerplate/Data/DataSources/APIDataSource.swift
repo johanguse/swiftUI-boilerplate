@@ -1,5 +1,36 @@
 import Foundation
 
+// MARK: - Generic response wrapper
+
+private struct APIDataWrapper<T: Decodable>: Decodable {
+    let data: T
+}
+
+// MARK: - Auth payload
+
+private struct APIAuthData: Decodable {
+    let user: APIUserDTO
+    let accessToken: String?
+    let refreshToken: String?
+}
+
+// MARK: - Upload payload
+
+private struct APIUploadData: Decodable {
+    let key: String
+    let url: String?
+}
+
+// MARK: - Error body
+
+private struct APIErrorBody: Decodable {
+    struct ErrorDetail: Decodable {
+        let code: String?
+        let message: String?
+    }
+    let error: ErrorDetail?
+}
+
 // MARK: - APIClient
 
 /// URLSession-based HTTP client. Injects the Bearer token on every request.
@@ -16,6 +47,7 @@ final class APIClient {
 
     private let decoder: JSONDecoder = {
         let d = JSONDecoder()
+        // Hono returns camelCase; convertFromSnakeCase is a no-op for camelCase keys.
         d.keyDecodingStrategy = .convertFromSnakeCase
         let fmt = ISO8601DateFormatter()
         d.dateDecodingStrategy = .custom { decoder in
@@ -46,20 +78,22 @@ final class APIClient {
     }
 
     func postVoid<B: Encodable>(_ path: String, body: B) async throws {
-        let _: APIEmptyResponse = try await perform("POST", path: path, body: try encode(body))
+        let _: EmptyResponse = try await perform("POST", path: path, body: try encode(body))
     }
 
     func postVoid(_ path: String) async throws {
-        let _: APIEmptyResponse = try await perform("POST", path: path, body: nil)
+        let _: EmptyResponse = try await perform("POST", path: path, body: nil)
     }
 
-    func uploadAvatar(_ path: String, imageData: Data) async throws -> String {
+    /// Upload image data as multipart/form-data to /api/v1/uploads.
+    /// Returns the public URL of the uploaded file.
+    func uploadFile(_ path: String, imageData: Data, mimeType: String = "image/jpeg") async throws -> String {
         let url = try makeURL(path)
         let boundary = UUID().uuidString
         var body = Data()
         body.append("--\(boundary)\r\n".utf8Data)
-        body.append("Content-Disposition: form-data; name=\"file\"; filename=\"avatar.jpg\"\r\n".utf8Data)
-        body.append("Content-Type: image/jpeg\r\n\r\n".utf8Data)
+        body.append("Content-Disposition: form-data; name=\"file\"; filename=\"upload.jpg\"\r\n".utf8Data)
+        body.append("Content-Type: \(mimeType)\r\n\r\n".utf8Data)
         body.append(imageData)
         body.append("\r\n--\(boundary)--\r\n".utf8Data)
 
@@ -67,11 +101,15 @@ final class APIClient {
         req.httpMethod = "POST"
         req.httpBody = body
         req.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
-        inject(&req)
+        injectAuth(&req)
 
         let (data, response) = try await session.data(for: req)
         try validate(response, data: data)
-        return try decoder.decode(AvatarUploadResponse.self, from: data).url
+        let wrapper = try decoder.decode(APIDataWrapper<APIUploadData>.self, from: data)
+        guard let fileUrl = wrapper.data.url else {
+            throw AppError.unknown("Upload succeeded but no public URL returned. Check R2 public base URL configuration.")
+        }
+        return fileUrl
     }
 
     // MARK: - Private
@@ -82,16 +120,15 @@ final class APIClient {
         req.httpMethod = method
         req.setValue("application/json", forHTTPHeaderField: "Content-Type")
         req.httpBody = body
-        inject(&req)
+        injectAuth(&req)
         let (data, response) = try await session.data(for: req)
         try validate(response, data: data)
         return try decoder.decode(T.self, from: data)
     }
 
     private func encode<B: Encodable>(_ value: B) throws -> Data {
-        let enc = JSONEncoder()
-        enc.keyEncodingStrategy = .convertToSnakeCase
-        return try enc.encode(value)
+        // Hono expects camelCase — do NOT use convertToSnakeCase.
+        return try JSONEncoder().encode(value)
     }
 
     private func makeURL(_ path: String) throws -> URL {
@@ -99,7 +136,7 @@ final class APIClient {
         return url
     }
 
-    private func inject(_ req: inout URLRequest) {
+    private func injectAuth(_ req: inout URLRequest) {
         if let token = TokenManager.shared.token {
             req.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         }
@@ -112,8 +149,9 @@ final class APIClient {
         case 401: throw AppError.invalidCredentials
         case 404: throw AppError.userNotFound
         default:
+            // Hono error shape: { "error": { "code": "...", "message": "..." } }
             if let err = try? decoder.decode(APIErrorBody.self, from: data),
-               let msg = err.errorMessage {
+               let msg = err.error?.message {
                 throw AppError.unknown(msg)
             }
             throw AppError.networkError
@@ -125,34 +163,7 @@ private extension String {
     var utf8Data: Data { Data(utf8) }
 }
 
-private struct APIEmptyResponse: Decodable {}
-private struct AvatarUploadResponse: Decodable { let url: String }
-// Handles three shapes the backend can return:
-//   { "detail": "string" }
-//   { "detail": { "error": "CODE", "message": "string" } }
-//   { "detail": [ { "msg": "string", ... } ] }  (FastAPI validation errors)
-private struct APIErrorBody: Decodable {
-    let errorMessage: String?
-
-    init(from decoder: Decoder) throws {
-        let c = try decoder.container(keyedBy: Keys.self)
-        if let s = try? c.decode(String.self, forKey: .detail) {
-            errorMessage = s
-        } else if let obj = try? c.decode(DetailObject.self, forKey: .detail) {
-            errorMessage = obj.message ?? obj.error
-        } else if let arr = try? c.decode([DetailItem].self, forKey: .detail) {
-            errorMessage = arr.first?.msg
-        } else if let msg = try? c.decode(String.self, forKey: .message) {
-            errorMessage = msg
-        } else {
-            errorMessage = nil
-        }
-    }
-
-    enum Keys: String, CodingKey { case detail, message }
-    private struct DetailObject: Decodable { let message: String?; let error: String? }
-    private struct DetailItem: Decodable { let msg: String? }
-}
+private struct EmptyResponse: Decodable {}
 
 // MARK: - APIDataSource
 
@@ -174,13 +185,13 @@ final class APIDataSource {
 
     // MARK: - Session
 
-    /// Validates the stored token against the server. Returns nil if expired or invalid.
+    /// Validates the stored token by fetching the current user. Returns nil if expired or invalid.
     func restoreSession() async throws -> APIUserDTO? {
         guard !TokenManager.shared.isExpired else { return nil }
         do {
-            let response: APISessionResponse = try await client.get(APIConfig.authPath("/session"))
-            applySession(response.session, user: response.user)
-            return response.user
+            let wrapper: APIDataWrapper<APIUserDTO> = try await client.get(APIConfig.apiPath("/users/me"))
+            currentUserDTO = wrapper.data
+            return wrapper.data
         } catch {
             return nil
         }
@@ -190,12 +201,12 @@ final class APIDataSource {
 
     func signIn(email: String, password: String) async throws -> APIUserDTO {
         do {
-            let response: APIAuthResponse = try await client.post(
-                APIConfig.authPath("/sign-in/email"),
+            let wrapper: APIDataWrapper<APIAuthData> = try await client.post(
+                APIConfig.authPath("/login"),
                 body: EmailPasswordRequest(email: email, password: password)
             )
-            applyAuthResponse(response)
-            return response.user
+            applyAuthData(wrapper.data)
+            return wrapper.data.user
         } catch {
             throw mapAuthError(error)
         }
@@ -203,12 +214,12 @@ final class APIDataSource {
 
     func signUp(name: String, email: String, password: String) async throws -> APIUserDTO {
         do {
-            let response: APIAuthResponse = try await client.post(
-                APIConfig.authPath("/sign-up/email"),
+            let wrapper: APIDataWrapper<APIAuthData> = try await client.post(
+                APIConfig.authPath("/register"),
                 body: SignUpRequest(email: email, password: password, name: name)
             )
-            applyAuthResponse(response)
-            return response.user
+            applyAuthData(wrapper.data)
+            return wrapper.data.user
         } catch let e as AppError {
             throw e
         } catch {
@@ -224,10 +235,14 @@ final class APIDataSource {
     }
 
     func changePassword(currentPassword: String, newPassword: String) async throws {
-        try await client.postVoid(
-            APIConfig.apiPath("/users/me/change-password"),
-            body: ChangePasswordRequest(currentPassword: currentPassword, newPassword: newPassword)
-        )
+        do {
+            try await client.postVoid(
+                APIConfig.authPath("/change-password"),
+                body: ChangePasswordRequest(currentPassword: currentPassword, newPassword: newPassword)
+            )
+        } catch {
+            throw mapAuthError(error)
+        }
     }
 
     func signOut() async throws {
@@ -235,29 +250,19 @@ final class APIDataSource {
             currentUserDTO = nil
             TokenManager.shared.clear()
         }
-        try await client.postVoid(APIConfig.authPath("/sign-out"))
+        try await client.postVoid(APIConfig.authPath("/logout"))
     }
 
     // MARK: - Users
 
-    func fetchUsers(limit: Int = 20, offset: Int = 0) async throws -> [APIUserDTO] {
-        do {
-            let path = APIConfig.apiPath("/users?limit=\(limit)&offset=\(offset)")
-            let response: APIUsersListResponse = try await client.get(path)
-            return response.users
-        } catch {
-            throw AppError.networkError
-        }
-    }
-
     func updateProfile(_ user: User) async throws -> APIUserDTO {
         do {
-            let updated: APIUserDTO = try await client.patch(
+            let wrapper: APIDataWrapper<APIUserDTO> = try await client.patch(
                 APIConfig.apiPath("/users/me"),
                 body: ProfileUpdateRequest(user: user)
             )
-            currentUserDTO = updated
-            return updated
+            currentUserDTO = wrapper.data
+            return wrapper.data
         } catch {
             throw AppError.unknown(error.localizedDescription)
         }
@@ -265,28 +270,29 @@ final class APIDataSource {
 
     func registerPushToken(_ token: String) async throws {
         try await client.postVoid(
-            APIConfig.apiPath("/users/me/push-token"),
-            body: PushTokenRequest(token: token, platform: "apns")
+            APIConfig.apiPath("/users/me/devices"),
+            body: PushDeviceRequest(token: token, platform: "ios")
         )
     }
 
-    /// Uploads image data as multipart/form-data. Backend must expose POST /users/me/avatar.
+    /// Uploads image data as multipart/form-data, then patches the user's avatar URL.
     func uploadAvatar(userId: String, imageData: Data) async throws -> String {
-        try await client.uploadAvatar(APIConfig.apiPath("/users/me/avatar"), imageData: imageData)
+        let fileUrl = try await client.uploadFile(APIConfig.apiPath("/uploads"), imageData: imageData)
+        // Update the user record with the new avatar URL
+        let _: APIDataWrapper<APIUserDTO> = try await client.patch(
+            APIConfig.apiPath("/users/me"),
+            body: AvatarUpdateRequest(avatar: fileUrl)
+        )
+        return fileUrl
     }
 
     // MARK: - Private
 
-    private func applyAuthResponse(_ response: APIAuthResponse) {
-        let token = response.session?.token ?? response.accessToken ?? ""
-        let expiry = response.session?.expiresAt ?? Date().addingTimeInterval(3600)
-        TokenManager.shared.save(token: token, expiresAt: expiry)
-        currentUserDTO = response.user
-    }
-
-    private func applySession(_ session: APISessionDTO, user: APIUserDTO) {
-        TokenManager.shared.save(token: session.token, expiresAt: session.expiresAt)
-        currentUserDTO = user
+    private func applyAuthData(_ auth: APIAuthData) {
+        let token = auth.accessToken ?? ""
+        let expiry = Date().addingTimeInterval(86400 * 7) // 7-day default; JWT embeds real expiry
+        TokenManager.shared.save(token: token, refreshToken: auth.refreshToken, expiresAt: expiry)
+        currentUserDTO = auth.user
     }
 
     private func mapAuthError(_ error: Error) -> AppError {
@@ -299,7 +305,7 @@ final class APIDataSource {
     }
 }
 
-// MARK: - Request bodies (private to this file)
+// MARK: - Request bodies
 
 private struct EmailPasswordRequest: Encodable {
     let email: String
@@ -316,52 +322,26 @@ private struct EmailRequest: Encodable {
     let email: String
 }
 
-private struct ChangePasswordRequest: Encodable {
-    let currentPassword: String
-    let newPassword: String
-}
-
-private struct PushTokenRequest: Encodable {
+private struct PushDeviceRequest: Encodable {
     let token: String
     let platform: String
 }
 
 private struct ProfileUpdateRequest: Encodable {
-    let name: String
-    let email: String
-    let avatarUrl: String?
-    let jobTitle: String?
-    let bio: String?
-    let country: String?
+    let name: String?
+    let avatar: String?
 
     init(user: User) {
-        name = user.fullName.trimmed
-        email = user.email.trimmed
-        avatarUrl = user.avatarUrl?.nilIfTrimmedEmpty
-        jobTitle = user.jobTitle.nilIfTrimmedEmpty
-        bio = user.bio.nilIfTrimmedEmpty
-        country = user.location.nilIfTrimmedEmpty
+        name = user.fullName.nilIfTrimmedEmpty
+        avatar = user.avatarUrl?.nilIfTrimmedEmpty
     }
 }
 
-// MARK: - Shared response types (internal — used by repositories)
-
-struct APIUsersListResponse: Decodable {
-    let users: [APIUserDTO]
+private struct AvatarUpdateRequest: Encodable {
+    let avatar: String?
 }
 
-struct APISessionResponse: Decodable {
-    let user: APIUserDTO
-    let session: APISessionDTO
-}
-
-struct APIAuthResponse: Decodable {
-    let user: APIUserDTO
-    let session: APISessionDTO?
-    let accessToken: String?
-}
-
-struct APISessionDTO: Decodable {
-    let token: String
-    let expiresAt: Date
+private struct ChangePasswordRequest: Encodable {
+    let currentPassword: String
+    let newPassword: String
 }
