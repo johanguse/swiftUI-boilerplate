@@ -113,6 +113,42 @@
 "error" = "Hata";
 "success" = "Başarılı";
 
+// MARK: - Auth (sosyal & kapat)
+"close" = "Kapat";
+"welcome_tagline" = "Yolculuğunuz burada başlıyor.";
+"continue_with_apple" = "Apple ile Devam Et";
+"continue_with_google" = "Google ile Devam Et";
+"continue_with_email" = "E-posta ile Devam Et";
+"social_sign_in_unavailable" = "Bu cihazda sosyal giriş mevcut değil.";
+"sign_in_email_subtitle" = "Giriş yapmak için e-posta ve şifrenizi girin.";
+
+// MARK: - E-posta Kodu Auth
+"email_auth_email_subtitle" = "E-postanızı girin, size tek kullanımlık bir kod gönderelim.";
+"check_your_email" = "E-postanızı kontrol edin";
+"email_auth_code_subtitle" = "E-posta adresinize bir kod gönderdik. Aşağıya girin.";
+"verification_code" = "Doğrulama Kodu";
+"verify" = "Doğrula";
+"resend_code" = "Kodu Yeniden Gönder";
+"send_code" = "Kod Gönder";
+
+// MARK: - Açılış
+"launch_tagline" = "Sizin için yapıldı.";
+
+// MARK: - Paywall
+"paywall_pro_title" = "Pro'ya Geç";
+"paywall_pro_subtitle" = "Tek abonelikle her şeyin kilidini açın.";
+"paywall_benefit_all_features" = "Tüm özelliklere tam erişim";
+"paywall_benefit_no_ads" = "Hiç reklam yok";
+"paywall_benefit_priority_support" = "Öncelikli destek";
+"paywall_benefit_exclusive" = "Özel içerik ve güncellemeler";
+"paywall_best_value" = "En İyi Değer";
+"paywall_popular" = "Popüler";
+"paywall_price_year" = "/yıl";
+"paywall_price_month" = "/ay";
+"paywall_price_week" = "/hafta";
+"paywall_start_pro" = "Pro'ya Başla";
+"paywall_subscription_disclaimer" = "İstediğiniz zaman iptal edin. App Store üzerinden faturalandırılır.";
+
 // MARK: - Doğrulama
 "invalid_email" = "Lütfen geçerli bir e-posta adresi girin";
 "weak_password" = "Şifre en az 8 karakter, bir büyük harf, bir rakam ve bir özel karakter içermelidir";

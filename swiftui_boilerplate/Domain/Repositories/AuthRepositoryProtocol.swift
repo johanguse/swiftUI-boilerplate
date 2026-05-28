@@ -10,4 +10,6 @@ protocol AuthRepositoryProtocol: AnyObject {
     func resetPassword(email: String) async throws
     func changePassword(currentPassword: String, newPassword: String) async throws
     func signOut() async throws
+    func sendEmailCode(email: String) async throws
+    func verifyEmailCode(email: String, code: String) async throws -> User
 }

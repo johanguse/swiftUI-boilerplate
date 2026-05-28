@@ -45,4 +45,12 @@ final class APIAuthRepository: AuthRepositoryProtocol {
         UserCache.clear()
         try await dataSource.signOut()
     }
+
+    func sendEmailCode(email: String) async throws {
+        throw AppError.unknown("Email code auth is not yet configured.")
+    }
+
+    func verifyEmailCode(email: String, code: String) async throws -> User {
+        throw AppError.unknown("Email code auth is not yet configured.")
+    }
 }

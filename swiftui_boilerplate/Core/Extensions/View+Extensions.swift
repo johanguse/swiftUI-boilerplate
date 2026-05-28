@@ -9,6 +9,19 @@ extension View {
             .shadow(color: Color.black.opacity(0.06), radius: 8, x: 0, y: 2)
     }
 
+    // MARK: - Glassmorphic Card Style
+    func glassmorphicCardStyle(cornerRadius: CGFloat = 20) -> some View {
+        self
+            .background(
+                RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+                    .fill(Color.white.opacity(0.05))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+                            .stroke(Color.white.opacity(0.08), lineWidth: 1)
+                    )
+            )
+    }
+
     // MARK: - Keyboard Dismissal
     func hideKeyboardOnTap() -> some View {
         self.onTapGesture {

@@ -4,6 +4,7 @@ enum AuthRoute: Hashable {
     case signIn
     case signUp
     case forgotPassword
+    case emailAuth
 }
 
 enum HomeRoute: Hashable {

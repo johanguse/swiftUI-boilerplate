@@ -51,7 +51,15 @@ final class LocalizationManager {
 
     init() {
         let stored = UserDefaults.standard.string(forKey: "app_language") ?? ""
-        currentLanguage = AppLanguage(rawValue: stored) ?? .english
+        if let saved = AppLanguage(rawValue: stored) {
+            currentLanguage = saved
+        } else {
+            // First launch: match the device's preferred language, fall back to English.
+            let systemCode = Locale.current.language.languageCode?.identifier ?? "en"
+            let detected = AppLanguage(rawValue: systemCode) ?? .english
+            currentLanguage = detected
+            UserDefaults.standard.set(detected.rawValue, forKey: "app_language")
+        }
     }
 
     func localizedString(for key: LocalizationKey) -> String {
@@ -61,6 +69,17 @@ final class LocalizationManager {
             return Bundle.main.localizedString(forKey: key.rawValue, value: key.rawValue, table: nil)
         }
         return bundle.localizedString(forKey: key.rawValue, value: key.rawValue, table: nil)
+    }
+
+    /// Returns a formatted string using the localized template for `key`.
+    /// Use this for any string that contains `%d`, `%@`, or other format specifiers.
+    func localizedFormat(for key: LocalizationKey, _ arguments: CVarArg...) -> String {
+        let template = localizedString(for: key)
+        return String(
+            format: template,
+            locale: Locale(identifier: currentLanguage.rawValue),
+            arguments: arguments
+        )
     }
 
     /// Localizes an `AppError` using the current language.

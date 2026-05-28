@@ -121,4 +121,40 @@ enum LocalizationKey: String {
     case weakPassword = "weak_password"
     case invalidCredentials = "invalid_credentials"
     case emptyName = "empty_name"
+
+    // Auth — social buttons & close
+    case close = "close"
+    case welcomeTagline = "welcome_tagline"
+    case continueWithApple = "continue_with_apple"
+    case continueWithGoogle = "continue_with_google"
+    case continueWithEmail = "continue_with_email"
+    case socialSignInUnavailable = "social_sign_in_unavailable"
+    case signInEmailSubtitle = "sign_in_email_subtitle"
+
+    // Email code auth
+    case emailAuthEmailSubtitle = "email_auth_email_subtitle"
+    case checkYourEmail = "check_your_email"
+    case emailAuthCodeSubtitle = "email_auth_code_subtitle"
+    case verificationCode = "verification_code"
+    case verify = "verify"
+    case resendCode = "resend_code"
+    case sendCode = "send_code"
+
+    // Launch
+    case launchTagline = "launch_tagline"
+
+    // Paywall
+    case paywallProTitle = "paywall_pro_title"
+    case paywallProSubtitle = "paywall_pro_subtitle"
+    case paywallBenefitAllFeatures = "paywall_benefit_all_features"
+    case paywallBenefitNoAds = "paywall_benefit_no_ads"
+    case paywallBenefitPrioritySupport = "paywall_benefit_priority_support"
+    case paywallBenefitExclusive = "paywall_benefit_exclusive"
+    case paywallBestValue = "paywall_best_value"
+    case paywallPopular = "paywall_popular"
+    case paywallPriceYear = "paywall_price_year"
+    case paywallPriceMonth = "paywall_price_month"
+    case paywallPriceWeek = "paywall_price_week"
+    case paywallStartPro = "paywall_start_pro"
+    case paywallSubscriptionDisclaimer = "paywall_subscription_disclaimer"
 }

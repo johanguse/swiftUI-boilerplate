@@ -113,6 +113,42 @@
 "error" = "Error";
 "success" = "Success";
 
+// MARK: - Auth (social & close)
+"close" = "Close";
+"welcome_tagline" = "Your journey starts here.";
+"continue_with_apple" = "Continue with Apple";
+"continue_with_google" = "Continue with Google";
+"continue_with_email" = "Continue with Email";
+"social_sign_in_unavailable" = "Social sign-in is not available on this device.";
+"sign_in_email_subtitle" = "Enter your email and password to sign in.";
+
+// MARK: - Email Code Auth
+"email_auth_email_subtitle" = "Enter your email and we'll send you a one-time code.";
+"check_your_email" = "Check your email";
+"email_auth_code_subtitle" = "We sent a code to your email address. Enter it below.";
+"verification_code" = "Verification Code";
+"verify" = "Verify";
+"resend_code" = "Resend Code";
+"send_code" = "Send Code";
+
+// MARK: - Launch
+"launch_tagline" = "Built for you.";
+
+// MARK: - Paywall
+"paywall_pro_title" = "Go Pro";
+"paywall_pro_subtitle" = "Unlock everything with a single subscription.";
+"paywall_benefit_all_features" = "Full access to all features";
+"paywall_benefit_no_ads" = "No ads, ever";
+"paywall_benefit_priority_support" = "Priority support";
+"paywall_benefit_exclusive" = "Exclusive content & updates";
+"paywall_best_value" = "Best Value";
+"paywall_popular" = "Popular";
+"paywall_price_year" = "/year";
+"paywall_price_month" = "/month";
+"paywall_price_week" = "/week";
+"paywall_start_pro" = "Start Pro";
+"paywall_subscription_disclaimer" = "Cancel anytime. Billed through the App Store.";
+
 // MARK: - Validation
 "invalid_email" = "Please enter a valid email address";
 "weak_password" = "Password must be at least 8 characters with an uppercase letter, a number, and a special character";

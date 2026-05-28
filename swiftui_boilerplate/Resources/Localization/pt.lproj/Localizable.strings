@@ -113,6 +113,42 @@
 "error" = "Erro";
 "success" = "Sucesso";
 
+// MARK: - Auth (social & close)
+"close" = "Fechar";
+"welcome_tagline" = "Sua jornada começa aqui.";
+"continue_with_apple" = "Continuar com Apple";
+"continue_with_google" = "Continuar com Google";
+"continue_with_email" = "Continuar com Email";
+"social_sign_in_unavailable" = "O login social não está disponível neste dispositivo.";
+"sign_in_email_subtitle" = "Digite seu e-mail e senha para entrar.";
+
+// MARK: - Email Code Auth
+"email_auth_email_subtitle" = "Digite seu e-mail e enviaremos um código de uso único.";
+"check_your_email" = "Verifique seu e-mail";
+"email_auth_code_subtitle" = "Enviamos um código para o seu e-mail. Digite-o abaixo.";
+"verification_code" = "Código de Verificação";
+"verify" = "Verificar";
+"resend_code" = "Reenviar Código";
+"send_code" = "Enviar Código";
+
+// MARK: - Launch
+"launch_tagline" = "Feito para você.";
+
+// MARK: - Paywall
+"paywall_pro_title" = "Assine o Pro";
+"paywall_pro_subtitle" = "Desbloqueie tudo com uma única assinatura.";
+"paywall_benefit_all_features" = "Acesso completo a todos os recursos";
+"paywall_benefit_no_ads" = "Sem anúncios, nunca";
+"paywall_benefit_priority_support" = "Suporte prioritário";
+"paywall_benefit_exclusive" = "Conteúdo e atualizações exclusivos";
+"paywall_best_value" = "Melhor Custo-Benefício";
+"paywall_popular" = "Popular";
+"paywall_price_year" = "/ano";
+"paywall_price_month" = "/mês";
+"paywall_price_week" = "/semana";
+"paywall_start_pro" = "Começar Pro";
+"paywall_subscription_disclaimer" = "Cancele quando quiser. Cobrado pela App Store.";
+
 // MARK: - Validation
 "invalid_email" = "Por favor insira um endereço de e-mail válido";
 "weak_password" = "A senha deve ter pelo menos 8 caracteres com uma letra maiúscula, um número e um caractere especial";

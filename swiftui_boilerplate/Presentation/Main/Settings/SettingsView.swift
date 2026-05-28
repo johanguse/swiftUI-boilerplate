@@ -174,35 +174,47 @@ struct SettingsView: View {
     // MARK: - Subscription Section
 
     private var subscriptionSection: some View {
-        SettingsSectionCard(title: localizationManager.localizedString(for: .subscription)) {
-            if purchaseManager.isProUser {
-                SettingsRow(
-                    icon: "star.fill",
-                    iconColor: .yellow,
-                    label: localizationManager.localizedString(for: .proActive),
-                    showChevron: false
-                )
-            } else {
-                SettingsRow(
-                    icon: "star.fill",
-                    iconColor: Color.appPrimary,
-                    label: localizationManager.localizedString(for: .upgradeToPro)
+        VStack(spacing: 16) {
+            if !purchaseManager.isProUser {
+                ProPromoCard(
+                    title: localizationManager.localizedString(for: .upgradeToPro),
+                    subtitle: localizationManager.localizedString(for: .subscription),
+                    actionTitle: localizationManager.localizedString(for: .upgradeToPro)
                 ) {
                     purchaseManager.isPresentingPaywall = true
                 }
             }
 
-            Divider().padding(.leading, 56)
+            SettingsSectionCard(title: localizationManager.localizedString(for: .subscription)) {
+                if purchaseManager.isProUser {
+                    SettingsRow(
+                        icon: "star.fill",
+                        iconColor: .yellow,
+                        label: localizationManager.localizedString(for: .proActive),
+                        showChevron: false
+                    )
+                } else {
+                    SettingsRow(
+                        icon: "star.fill",
+                        iconColor: Color.appPrimary,
+                        label: localizationManager.localizedString(for: .upgradeToPro)
+                    ) {
+                        purchaseManager.isPresentingPaywall = true
+                    }
+                }
 
-            SettingsRow(
-                icon: "arrow.clockwise",
-                iconColor: .gray,
-                label: purchaseManager.isLoadingRestore
-                    ? localizationManager.localizedString(for: .restoring)
-                    : localizationManager.localizedString(for: .restorePurchases),
-                showChevron: false
-            ) {
-                Task { await purchaseManager.restorePurchases() }
+                Divider().padding(.leading, 56)
+
+                SettingsRow(
+                    icon: "arrow.clockwise",
+                    iconColor: .gray,
+                    label: purchaseManager.isLoadingRestore
+                        ? localizationManager.localizedString(for: .restoring)
+                        : localizationManager.localizedString(for: .restorePurchases),
+                    showChevron: false
+                ) {
+                    Task { await purchaseManager.restorePurchases() }
+                }
             }
         }
     }
@@ -289,261 +301,5 @@ struct SettingsView: View {
                 .contentShape(Rectangle())
             }
         }
-    }
-}
-
-// MARK: - Settings Row
-
-private struct SettingsRow: View {
-    let icon: String
-    let iconColor: Color
-    let label: String
-    var value: String? = nil
-    var showChevron: Bool = true
-    var action: (() -> Void)? = nil
-
-    var body: some View {
-        Button {
-            action?()
-        } label: {
-            HStack(spacing: 14) {
-                Image(systemName: icon)
-                    .font(.system(size: 15, weight: .medium))
-                    .foregroundStyle(.white)
-                    .frame(width: 32, height: 32)
-                    .background(iconColor)
-                    .clipShape(RoundedRectangle(cornerRadius: 8))
-
-                Text(label)
-                    .font(.subheadline)
-                    .foregroundStyle(Color.appText)
-
-                Spacer()
-
-                if let value {
-                    Text(value)
-                        .font(.subheadline)
-                        .foregroundStyle(Color.appSubtext)
-                }
-
-                if showChevron && action != nil {
-                    Image(systemName: "chevron.right")
-                        .font(.caption.weight(.semibold))
-                        .foregroundStyle(Color.appSubtext.opacity(0.5))
-                }
-            }
-            .padding(.vertical, 12)
-            .contentShape(Rectangle())
-        }
-        .buttonStyle(.plain)
-        .disabled(action == nil)
-    }
-}
-
-// MARK: - Settings Toggle Row
-
-private struct SettingsToggleRow: View {
-    let icon: String
-    let iconColor: Color
-    let label: String
-    @Binding var isOn: Bool
-
-    var body: some View {
-        HStack(spacing: 14) {
-            Image(systemName: icon)
-                .font(.system(size: 15, weight: .medium))
-                .foregroundStyle(.white)
-                .frame(width: 32, height: 32)
-                .background(iconColor)
-                .clipShape(RoundedRectangle(cornerRadius: 8))
-
-            Text(label)
-                .font(.subheadline)
-                .foregroundStyle(Color.appText)
-
-            Spacer()
-
-            Toggle("", isOn: $isOn)
-                .labelsHidden()
-        }
-        .padding(.vertical, 12)
-    }
-}
-
-// MARK: - Settings Section Card
-
-private struct SettingsSectionCard<Content: View>: View {
-    let title: String
-    @ViewBuilder let content: Content
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            if !title.isEmpty {
-                Text(title.uppercased())
-                    .font(.caption)
-                    .fontWeight(.semibold)
-                    .foregroundStyle(Color.appSubtext)
-                    .padding(.horizontal, 4)
-                    .padding(.bottom, 8)
-            }
-
-            VStack(alignment: .leading, spacing: 0) {
-                content
-            }
-            .padding(.horizontal, 16)
-            .background(Color.appSurface)
-            .clipShape(RoundedRectangle(cornerRadius: 16))
-            .shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 2)
-        }
-    }
-}
-
-// MARK: - Language Picker Sheet
-
-private struct LanguagePickerSheet: View {
-    let localization: LocalizationManager
-    @Binding var languageBinding: AppLanguage
-    @Binding var isPresented: Bool
-
-    var body: some View {
-        VStack(spacing: 0) {
-            Text(localization.localizedString(for: .language))
-                .font(.headline)
-                .fontWeight(.semibold)
-                .frame(maxWidth: .infinity)
-                .padding(.top, 16)
-                .padding(.bottom, 12)
-
-            Divider()
-
-            ForEach(AppLanguage.allCases) { language in
-                Button {
-                    languageBinding = language
-                    isPresented = false
-                } label: {
-                    HStack(spacing: 12) {
-                        Text(language.flag)
-                            .font(.title3)
-                        Text(language.displayName)
-                            .font(.subheadline)
-                            .foregroundStyle(Color.appText)
-                        Spacer()
-                        if languageBinding == language {
-                            Image(systemName: "checkmark")
-                                .font(.subheadline.weight(.semibold))
-                                .foregroundStyle(Color.appPrimary)
-                        }
-                    }
-                    .padding(.horizontal, 24)
-                    .padding(.vertical, 14)
-                    .contentShape(Rectangle())
-                }
-                .buttonStyle(.plain)
-
-                if language != AppLanguage.allCases.last {
-                    Divider().padding(.horizontal, 24)
-                }
-            }
-        }
-        .background(Color.appSurface.ignoresSafeArea())
-    }
-}
-
-// MARK: - Edit Profile Sheet
-
-private struct EditProfileSheet: View {
-    @Bindable var viewModel: SettingsViewModel
-    let localization: LocalizationManager
-
-    var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(spacing: 24) {
-                    if let user = viewModel.currentUser {
-                        let isUploadingAvatar = viewModel.isUploadingAvatar
-
-                        VStack(spacing: 10) {
-                            PhotosPicker(
-                                selection: $viewModel.selectedPhotoItem,
-                                matching: .images,
-                                photoLibrary: .shared()
-                            ) {
-                                ZStack(alignment: .bottomTrailing) {
-                                    UserAvatarView(systemName: user.avatarSystemName, avatarUrl: user.avatarUrl, size: .large)
-                                    Group {
-                                        if isUploadingAvatar {
-                                            ProgressView().tint(.white)
-                                        } else {
-                                            Image(systemName: "camera.fill")
-                                                .font(.caption.weight(.semibold))
-                                                .foregroundStyle(.white)
-                                        }
-                                    }
-                                    .padding(6)
-                                    .background(Color.appPrimary)
-                                    .clipShape(Circle())
-                                    .offset(x: 4, y: 4)
-                                }
-                            }
-                            .buttonStyle(.plain)
-                            .disabled(viewModel.isUploadingAvatar)
-
-                            Text(localization.localizedString(for: .changePhoto))
-                                .font(.caption)
-                                .foregroundStyle(Color.appPrimary)
-                            Text(user.email)
-                                .font(.caption)
-                                .foregroundStyle(Color.appSubtext)
-                        }
-                        .frame(maxWidth: .infinity)
-                        .padding(.top, 8)
-                    }
-
-                    VStack(spacing: 16) {
-                        AppTextField(
-                            title: localization.localizedString(for: .fullName),
-                            text: $viewModel.editableName,
-                            textContentType: .name
-                        )
-                        AppTextField(
-                            title: localization.localizedString(for: .email),
-                            text: $viewModel.editableEmail,
-                            keyboardType: .emailAddress,
-                            textContentType: .emailAddress
-                        )
-                        AppTextField(
-                            title: localization.localizedString(for: .jobTitle),
-                            text: $viewModel.editableJobTitle
-                        )
-                        AppTextField(
-                            title: localization.localizedString(for: .bio),
-                            text: $viewModel.editableBio
-                        )
-                    }
-
-                    PrimaryButton(
-                        title: localization.localizedString(for: .save),
-                        isLoading: viewModel.isSaving,
-                        isDisabled: !viewModel.isProfileFormValid
-                    ) {
-                        Task { await viewModel.saveProfile() }
-                    }
-                }
-                .padding(.horizontal, 24)
-                .padding(.bottom, 40)
-            }
-            .background(Color.appBackground.ignoresSafeArea())
-            .navigationTitle(localization.localizedString(for: .editProfile))
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button(localization.localizedString(for: .cancel)) {
-                        viewModel.showEditProfileSheet = false
-                    }
-                }
-            }
-            .errorAlert(message: $viewModel.errorMessage, localization: localization)
-        }
-        .hideKeyboardOnTap()
     }
 }

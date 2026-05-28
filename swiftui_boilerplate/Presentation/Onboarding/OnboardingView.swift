@@ -3,24 +3,26 @@ import SwiftUI
 struct OnboardingView: View {
     let localization: LocalizationManager
     let onComplete: () -> Void
+    var requestNotificationPermission: (() async -> Bool)? = nil
 
     @State private var currentPage = 0
-    private let totalPages = 3
+    private let totalPages = 4
 
     var body: some View {
         ZStack(alignment: .topTrailing) {
             TabView(selection: $currentPage) {
                 welcomePage.tag(0)
                 featuresPage.tag(1)
-                readyPage.tag(2)
+                notificationsPage.tag(2)
+                readyPage.tag(3)
             }
             .tabViewStyle(.page(indexDisplayMode: .never))
             .animation(.easeInOut(duration: 0.3), value: currentPage)
 
-            if currentPage < 2 {
+            if currentPage < 3 {
                 Button(localization.localizedString(for: .onboardingSkip)) {
                     HapticsManager.impact(.light)
-                    withAnimation { currentPage = 2 }
+                    withAnimation { currentPage = 3 }
                 }
                 .font(.subheadline)
                 .foregroundStyle(Color.appSubtext)
@@ -48,7 +50,7 @@ struct OnboardingView: View {
                 Circle()
                     .fill(Color.appPrimary.gradient)
                     .frame(width: 88, height: 88)
-                Image(systemName: "person.2.fill")
+                Image(systemName: "swift")
                     .font(.system(size: 36, weight: .medium))
                     .foregroundStyle(.white)
             }
@@ -96,19 +98,19 @@ struct OnboardingView: View {
             .padding(.bottom, 40)
 
             VStack(spacing: 16) {
-                FeatureRow(
+                OnboardingFeatureRow(
                     icon: "lock.shield.fill",
                     color: .indigo,
                     title: localization.localizedString(for: .featureSecureTitle),
                     description: localization.localizedString(for: .featureSecureDesc)
                 )
-                FeatureRow(
+                OnboardingFeatureRow(
                     icon: "bolt.fill",
                     color: .orange,
                     title: localization.localizedString(for: .featureFastTitle),
                     description: localization.localizedString(for: .featureFastDesc)
                 )
-                FeatureRow(
+                OnboardingFeatureRow(
                     icon: "globe.americas.fill",
                     color: .green,
                     title: localization.localizedString(for: .featureGlobalTitle),
@@ -126,7 +128,63 @@ struct OnboardingView: View {
         .padding(.bottom, 48)
     }
 
-    // MARK: - Page 3: Ready
+    // MARK: - Page 3: Notifications
+
+    private var notificationsPage: some View {
+        VStack(spacing: 0) {
+            Spacer()
+
+            ZStack {
+                Circle()
+                    .fill(Color.appPrimary.opacity(0.12))
+                    .frame(width: 160, height: 160)
+                Circle()
+                    .fill(Color.appPrimary.opacity(0.2))
+                    .frame(width: 120, height: 120)
+                Circle()
+                    .fill(Color.appPrimary.gradient)
+                    .frame(width: 88, height: 88)
+                Image(systemName: "bell.badge.fill")
+                    .font(.system(size: 36, weight: .medium))
+                    .foregroundStyle(.white)
+            }
+            .padding(.bottom, 48)
+
+            VStack(spacing: 12) {
+                Text(localization.localizedString(for: .notificationsTitle))
+                    .font(.system(size: 30, weight: .bold, design: .rounded))
+                    .foregroundStyle(Color.appText)
+                    .multilineTextAlignment(.center)
+
+                Text(localization.localizedString(for: .notificationsSubtitle))
+                    .font(.subheadline)
+                    .foregroundStyle(Color.appSubtext)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 40)
+            }
+
+            Spacer()
+            pageIndicator
+
+            VStack(spacing: 12) {
+                bottomButton(title: localization.localizedString(for: .enableNotifications)) {
+                    Task {
+                        _ = await requestNotificationPermission?()
+                        withAnimation { currentPage = 3 }
+                    }
+                }
+
+                Button(localization.localizedString(for: .notificationsLater)) {
+                    withAnimation { currentPage = 3 }
+                }
+                .font(.subheadline)
+                .foregroundStyle(Color.appSubtext)
+            }
+        }
+        .padding(.bottom, 48)
+    }
+
+    // MARK: - Page 4: Ready
 
     private var readyPage: some View {
         VStack(spacing: 0) {
@@ -192,7 +250,7 @@ struct OnboardingView: View {
 
 // MARK: - Feature Row
 
-private struct FeatureRow: View {
+private struct OnboardingFeatureRow: View {
     let icon: String
     let color: Color
     let title: String

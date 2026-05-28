@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct SignUpView: View {
+    @Environment(\.dismiss) private var dismiss
     @State private var viewModel: SignUpViewModel
     private let localization: LocalizationManager
     private let router: AppRouter
@@ -30,6 +31,19 @@ struct SignUpView: View {
         .background(Color.appBackground.ignoresSafeArea())
         .navigationTitle(localization.localizedString(for: .signUp))
         .navigationBarTitleDisplayMode(.large)
+        .navigationBarBackButtonHidden(true)
+        .toolbarColorScheme(.dark, for: .navigationBar)
+        .colorScheme(.dark)
+        .toolbar {
+            ToolbarItem(placement: .topBarLeading) {
+                Button { dismiss() } label: {
+                    Image(systemName: "chevron.left")
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundStyle(Color.appText)
+                }
+                .buttonStyle(.plain)
+            }
+        }
         .hideKeyboardOnTap()
         .errorAlert(message: $viewModel.errorMessage, localization: localization)
     }

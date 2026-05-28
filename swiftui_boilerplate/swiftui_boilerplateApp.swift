@@ -32,9 +32,11 @@ private struct RootView: View {
             if router.isCheckingSession {
                 LaunchView()
             } else if router.needsOnboarding {
-                OnboardingView(localization: container.localizationManager) {
-                    container.finishOnboarding()
-                }
+                OnboardingView(
+                    localization: container.localizationManager,
+                    onComplete: { container.finishOnboarding() },
+                    requestNotificationPermission: { await container.notificationService.requestPermission() }
+                )
             } else if router.isAuthenticated {
                 MainTabView(container: container)
             } else {

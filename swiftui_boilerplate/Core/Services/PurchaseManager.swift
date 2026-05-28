@@ -3,6 +3,8 @@ import Observation
 
 #if canImport(RevenueCat)
 import RevenueCat
+#else
+import StoreKit
 #endif
 
 /// Manages in-app purchase state and RevenueCat integration.
@@ -30,6 +32,8 @@ final class PurchaseManager {
             }
             await refreshProStatus()
         }
+        #else
+        Task { await loadProducts() }
         #endif
     }
 
@@ -41,6 +45,15 @@ final class PurchaseManager {
         defer { isLoadingRestore = false }
         if let info = try? await Purchases.shared.restorePurchases() {
             isProUser = info.entitlements[RevenueCatConfig.proEntitlementId]?.isActive == true
+        }
+        #else
+        isLoadingRestore = true
+        defer { isLoadingRestore = false }
+        do {
+            try await AppStore.sync()
+            await refreshProStatus()
+        } catch {
+            // Restore failed silently — user will see no change
         }
         #endif
     }
@@ -61,6 +74,42 @@ final class PurchaseManager {
         if let info = try? await Purchases.shared.customerInfo() {
             isProUser = info.entitlements[RevenueCatConfig.proEntitlementId]?.isActive == true
         }
+        #else
+        for await result in Transaction.currentEntitlements {
+            if case .verified(let transaction) = result, transaction.revocationDate == nil {
+                isProUser = true
+                return
+            }
+        }
+        isProUser = false
         #endif
     }
+
+    // MARK: - StoreKit 2 (non-RevenueCat path)
+
+    #if !canImport(RevenueCat)
+    private(set) var products: [Product] = []
+
+    func loadProducts() async {
+        // Replace these product IDs with your App Store Connect identifiers.
+        let ids: Set<String> = ["pro_yearly", "pro_monthly", "pro_weekly"]
+        products = (try? await Product.products(for: ids)) ?? []
+        await refreshProStatus()
+    }
+
+    func purchase(_ product: Product) async throws {
+        let result = try await product.purchase()
+        switch result {
+        case .success(let verification):
+            if case .verified(let transaction) = verification {
+                await transaction.finish()
+                isProUser = true
+            }
+        case .userCancelled, .pending:
+            break
+        @unknown default:
+            break
+        }
+    }
+    #endif
 }
