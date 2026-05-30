@@ -1,0 +1,156 @@
+// MARK: - Onboarding
+"onboarding_skip" = "Pular";
+"onboarding_next" = "Próximo";
+"onboarding_get_started" = "Começar";
+"onboarding_welcome_title" = "Bem-vindo";
+"onboarding_welcome_subtitle" = "Seu app completo para se manter conectado, produtivo e no controle.";
+"onboarding_features_title" = "Tudo que você precisa";
+"onboarding_features_subtitle" = "Recursos poderosos para usuários modernos.";
+"onboarding_ready_title" = "Pronto!";
+"onboarding_ready_subtitle" = "Vamos começar. Crie uma conta ou entre para continuar.";
+"feature_secure_title" = "Seguro por padrão";
+"feature_secure_desc" = "Seus dados são criptografados e armazenados com segurança.";
+"feature_fast_title" = "Ultra rápido";
+"feature_fast_desc" = "Otimizado para velocidade em cada dispositivo.";
+"feature_global_title" = "Multilíngue";
+"feature_global_desc" = "Disponível em vários idiomas no mundo todo.";
+
+// MARK: - Change Password
+"current_password" = "Senha Atual";
+"new_password" = "Nova Senha";
+"confirm_new_password" = "Confirmar Nova Senha";
+"change_password_title" = "Alterar Senha";
+"password_changed" = "Senha alterada com sucesso";
+"password_mismatch" = "As senhas não coincidem";
+
+// MARK: - Notifications
+"notifications_title" = "Fique por dentro";
+"notifications_subtitle" = "Ative as notificações para receber atualizações, alertas e mensagens importantes.";
+"enable_notifications" = "Ativar Notificações";
+"notifications_later" = "Talvez depois";
+
+// MARK: - Welcome
+"welcome_title" = "Bem-vindo de volta";
+"welcome_subtitle" = "Entre para continuar ou crie uma nova conta";
+"sign_in" = "Entrar";
+"sign_up" = "Cadastrar-se";
+
+// MARK: - Sign In
+"email" = "E-mail";
+"password" = "Senha";
+"forgot_password" = "Esqueceu a senha?";
+"no_account" = "Não tem uma conta?";
+
+// MARK: - Sign Up
+"full_name" = "Nome completo";
+"confirm_password" = "Confirmar senha";
+"already_have_account" = "Já tem uma conta?";
+"passwords_do_not_match" = "As senhas não coincidem";
+"create_account" = "Criar conta";
+
+// MARK: - Forgot Password
+"forgot_password_title" = "Redefinir senha";
+"forgot_password_subtitle" = "Digite seu e-mail e enviaremos um link para redefinir sua senha";
+"send_reset_link" = "Enviar link de redefinição";
+"reset_link_sent" = "Link enviado!";
+"reset_link_sent_subtitle" = "Verifique sua caixa de entrada para o link de redefinição de senha.";
+"back_to_sign_in" = "Voltar para o login";
+
+// MARK: - Home
+"home_title" = "Início";
+"users" = "Usuários";
+"followers" = "Seguidores";
+"following" = "Seguindo";
+"good_morning" = "Bom dia";
+"good_afternoon" = "Boa tarde";
+"good_evening" = "Boa noite";
+"people" = "Pessoas";
+"no_users_yet" = "Ainda não há pessoas";
+"my_profile" = "Meu perfil";
+
+// MARK: - Profile / Settings
+"profile_title" = "Perfil";
+"edit_profile" = "Editar perfil";
+"bio" = "Bio";
+"location" = "Localização";
+"job_title" = "Cargo";
+
+// MARK: - Assinatura
+"subscription" = "Assinatura";
+"upgrade_to_pro" = "Assinar Pro";
+"pro_active" = "Pro Ativo ✓";
+"restore_purchases" = "Restaurar compras";
+"restoring" = "Restaurando...";
+
+// MARK: - Settings
+"change_photo" = "Alterar foto";
+"settings_title" = "Configurações";
+"appearance" = "Aparência";
+"language" = "Idioma";
+"account" = "Conta";
+"sign_out" = "Sair";
+"sign_out_confirm" = "Tem certeza que deseja sair?";
+"profile_updated" = "Perfil atualizado com sucesso";
+"app_version" = "Versão";
+"change_password" = "Alterar Senha";
+"dark_mode" = "Modo escuro";
+"about" = "Sobre";
+"privacy_policy" = "Política de privacidade";
+"terms_of_service" = "Termos de serviço";
+
+// MARK: - Theme Options
+"theme_light" = "Claro";
+"theme_dark" = "Escuro";
+"theme_system" = "Sistema";
+
+// MARK: - General
+"loading" = "Carregando...";
+"error_generic" = "Algo deu errado. Por favor tente novamente.";
+"save" = "Salvar";
+"cancel" = "Cancelar";
+"done" = "Concluído";
+"ok" = "OK";
+"error" = "Erro";
+"success" = "Sucesso";
+
+// MARK: - Auth (social & close)
+"close" = "Fechar";
+"welcome_tagline" = "Sua jornada começa aqui.";
+"continue_with_apple" = "Continuar com Apple";
+"continue_with_google" = "Continuar com Google";
+"continue_with_email" = "Continuar com Email";
+"social_sign_in_unavailable" = "O login social não está disponível neste dispositivo.";
+"sign_in_email_subtitle" = "Digite seu e-mail e senha para entrar.";
+
+// MARK: - Email Code Auth
+"email_auth_email_subtitle" = "Digite seu e-mail e enviaremos um código de uso único.";
+"check_your_email" = "Verifique seu e-mail";
+"email_auth_code_subtitle" = "Enviamos um código para o seu e-mail. Digite-o abaixo.";
+"verification_code" = "Código de Verificação";
+"verify" = "Verificar";
+"resend_code" = "Reenviar Código";
+"send_code" = "Enviar Código";
+
+// MARK: - Launch
+"launch_tagline" = "Feito para você.";
+
+// MARK: - Paywall
+"paywall_pro_title" = "Assine o Pro";
+"paywall_pro_subtitle" = "Desbloqueie tudo com uma única assinatura.";
+"paywall_benefit_all_features" = "Acesso completo a todos os recursos";
+"paywall_benefit_no_ads" = "Sem anúncios, nunca";
+"paywall_benefit_priority_support" = "Suporte prioritário";
+"paywall_benefit_exclusive" = "Conteúdo e atualizações exclusivos";
+"paywall_best_value" = "Melhor Custo-Benefício";
+"paywall_popular" = "Popular";
+"paywall_price_year" = "/ano";
+"paywall_price_month" = "/mês";
+"paywall_price_week" = "/semana";
+"paywall_start_pro" = "Começar Pro";
+"paywall_subscription_disclaimer" = "Cancele quando quiser. Cobrado pela App Store.";
+
+// MARK: - Validation
+"invalid_email" = "Por favor insira um endereço de e-mail válido";
+"weak_password" = "A senha deve ter pelo menos 8 caracteres com uma letra maiúscula, um número e um caractere especial";
+"invalid_credentials" = "E-mail ou senha inválidos. Por favor tente novamente.";
+"empty_name" = "O nome não pode estar vazio";

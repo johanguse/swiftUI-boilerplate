@@ -1,6 +1,6 @@
 # SwiftUI Boilerplate
 
-A production-ready SwiftUI boilerplate with **Clean Architecture**, **FastAPI backend integration**, full **authentication flow**, **onboarding**, **Firebase-ready analytics & crash reporting**, **RevenueCat-ready in-app purchases**, **push notifications**, **theme switching**, and **multilingual (EN/TR/ES/PT) localization** — built for iOS 17.5+.
+A production-ready SwiftUI boilerplate with **Clean Architecture**, **FastAPI backend integration**, full **authentication flow**, **onboarding**, **Firebase-ready analytics & crash reporting**, **RevenueCat-ready in-app purchases**, **push notifications**, **theme switching**, and **multilingual (EN/TR/ES/PT-BR/PT-PT) localization** — built for iOS 17.5+.
 
 ---
 
@@ -13,7 +13,7 @@ A production-ready SwiftUI boilerplate with **Clean Architecture**, **FastAPI ba
 - **User list** — Paginated list with skeleton loading and detail view
 - **Settings** — Expo-style settings screen with edit profile, change password, theme toggle, language picker
 - **Theme switching** — Light / Dark / System with instant preview
-- **Localization** — English, Turkish, Spanish, Portuguese — switchable at runtime without restart
+- **Localization** — English, Turkish, Spanish, Brazilian Portuguese, European Portuguese — switchable at runtime without restart
 - **In-app purchases** — `PurchaseManager` with RevenueCat integration; no-op when SDK not linked
 - **Paywall** — `RevenueCatUI.PaywallView` when linked; clean placeholder otherwise
 - **Analytics** — Protocol-driven; ships with no-op implementation; drops in Firebase with zero code changes
@@ -157,7 +157,8 @@ swiftui_boilerplate/
 ├── en.lproj/Localizable.strings       # English strings
 ├── tr.lproj/Localizable.strings       # Turkish strings
 ├── es.lproj/Localizable.strings       # Spanish strings
-├── pt.lproj/Localizable.strings       # Portuguese strings
+├── pt-BR.lproj/Localizable.strings    # Brazilian Portuguese strings
+├── pt-PT.lproj/Localizable.strings    # European Portuguese strings
 └── swiftui_boilerplateApp.swift       # @main entry point
 ```
 
@@ -383,7 +384,7 @@ This boilerplate ships with RevenueCat. To use StoreKit directly, remove `Purcha
 | Crash reporting | Protocol-based; Firebase-ready |
 | Push notifications | APNs / FCM via Firebase |
 | In-app purchases | `PurchaseManager`; RevenueCat-ready |
-| Localization | Custom `LocalizationManager` (EN / TR / ES / PT) |
+| Localization | Custom `LocalizationManager` (EN / TR / ES / PT-BR / PT-PT) |
 | Minimum iOS | 17.5 |
 
 ---
@@ -402,9 +403,9 @@ extension Color {
 
 ### Add a language
 
-The boilerplate ships with **English, Turkish, Spanish, and Portuguese**.
+The boilerplate ships with **English, Turkish, Spanish, Brazilian Portuguese, and European Portuguese**.
 
-1. Create `xx.lproj/Localizable.strings` (copy from `en.lproj` and translate)
+1. Create a BCP-47 `.lproj` folder such as `fr.lproj`, `pt-BR.lproj`, or `pt-PT.lproj` (copy from `en.lproj` and translate)
 2. Add the locale in Xcode: select the project → **Info** tab → **Localizations** → **+**
 3. Add a new case to `AppLanguage` in `LocalizationManager.swift`:
 

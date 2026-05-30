@@ -5,34 +5,61 @@ enum AppLanguage: String, CaseIterable, Identifiable {
     case english = "en"
     case turkish = "tr"
     case spanish = "es"
-    case portuguese = "pt"
+    case portugueseBrazil = "pt-BR"
+    case portuguesePortugal = "pt-PT"
 
     var id: String { rawValue }
 
     var displayName: String {
         switch self {
-        case .english:    return "English"
-        case .turkish:    return "Türkçe"
-        case .spanish:    return "Español"
-        case .portuguese: return "Português"
+        case .english:            return "English"
+        case .turkish:            return "Türkçe"
+        case .spanish:            return "Español"
+        case .portugueseBrazil:   return "Português (Brasil)"
+        case .portuguesePortugal: return "Português (Portugal)"
         }
     }
 
     var shortCode: String {
         switch self {
-        case .english:    return "EN"
-        case .turkish:    return "TR"
-        case .spanish:    return "ES"
-        case .portuguese: return "PT"
+        case .english:            return "EN"
+        case .turkish:            return "TR"
+        case .spanish:            return "ES"
+        case .portugueseBrazil:   return "PT-BR"
+        case .portuguesePortugal: return "PT-PT"
         }
     }
 
     var flag: String {
         switch self {
-        case .english:    return "🇺🇸"
-        case .turkish:    return "🇹🇷"
-        case .spanish:    return "🇪🇸"
-        case .portuguese: return "🇧🇷"
+        case .english:            return "🇺🇸"
+        case .turkish:            return "🇹🇷"
+        case .spanish:            return "🇪🇸"
+        case .portugueseBrazil:   return "🇧🇷"
+        case .portuguesePortugal: return "🇵🇹"
+        }
+    }
+
+    static func matching(identifier: String) -> AppLanguage? {
+        let normalizedIdentifier = identifier.replacingOccurrences(of: "_", with: "-")
+
+        if normalizedIdentifier == "pt" {
+            return .portugueseBrazil
+        }
+
+        if let exactMatch = AppLanguage(rawValue: normalizedIdentifier) {
+            return exactMatch
+        }
+
+        let language = Locale.Language(identifier: normalizedIdentifier)
+        switch language.languageCode?.identifier {
+        case "en": return .english
+        case "tr": return .turkish
+        case "es": return .spanish
+        case "pt":
+            return language.region?.identifier == "PT" ? .portuguesePortugal : .portugueseBrazil
+        default:
+            return nil
         }
     }
 }
@@ -51,15 +78,14 @@ final class LocalizationManager {
 
     init() {
         let stored = UserDefaults.standard.string(forKey: "app_language") ?? ""
-        if let saved = AppLanguage(rawValue: stored) {
+        if let saved = AppLanguage.matching(identifier: stored) {
             currentLanguage = saved
         } else {
-            // First launch: match the device's preferred language, fall back to English.
-            let systemCode = Locale.current.language.languageCode?.identifier ?? "en"
-            let detected = AppLanguage(rawValue: systemCode) ?? .english
+            let preferredIdentifier = Locale.preferredLanguages.first ?? Locale.current.identifier
+            let detected = AppLanguage.matching(identifier: preferredIdentifier) ?? .english
             currentLanguage = detected
-            UserDefaults.standard.set(detected.rawValue, forKey: "app_language")
         }
+        UserDefaults.standard.set(currentLanguage.rawValue, forKey: "app_language")
     }
 
     func localizedString(for key: LocalizationKey) -> String {
