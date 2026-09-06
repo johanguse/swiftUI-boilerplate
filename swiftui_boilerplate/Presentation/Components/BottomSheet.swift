@@ -4,6 +4,7 @@ struct BottomSheetHeader: View {
     var title: String? = nil
     var showDragHandle: Bool = true
     var onDismiss: (() -> Void)? = nil
+    var dismissAccessibilityLabel: String = ""
 
     var body: some View {
         VStack(spacing: 0) {
@@ -30,6 +31,7 @@ struct BottomSheetHeader: View {
                                 .font(.title3)
                                 .foregroundStyle(Color.appSubtext.opacity(0.6))
                         }
+                        .accessibilityLabel(dismissAccessibilityLabel)
                     }
                 }
                 .padding(.horizontal, 20)
@@ -76,7 +78,7 @@ extension View {
             Button("Show Sheet") { showSheet = true }
                 .bottomSheet(isPresented: $showSheet, detents: [.medium]) {
                     VStack(spacing: 0) {
-                        BottomSheetHeader(title: "Options", onDismiss: { showSheet = false })
+                        BottomSheetHeader(title: "Options", onDismiss: { showSheet = false }, dismissAccessibilityLabel: "Close")
 
                         VStack(spacing: 12) {
                             Text("Sheet content goes here")

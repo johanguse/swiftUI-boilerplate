@@ -3,7 +3,8 @@ import Observation
 
 @Observable
 @MainActor
-final class ChangePasswordViewModel {
+final class ChangePasswordViewModel: Identifiable {
+    let id = UUID()
     var currentPassword: String = ""
     var newPassword: String = ""
     var confirmPassword: String = ""

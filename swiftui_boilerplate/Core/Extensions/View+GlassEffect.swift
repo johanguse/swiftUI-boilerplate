@@ -10,10 +10,7 @@ extension View {
                 .background(
                     RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
                         .fill(.ultraThinMaterial)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                                .stroke(Color.white.opacity(0.08), lineWidth: 1)
-                        )
+                        .stroke(Color.white.opacity(0.08), lineWidth: 1)
                 )
         }
     }
@@ -27,10 +24,7 @@ extension View {
                 .background(
                     RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
                         .fill(.ultraThinMaterial)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                                .stroke(Color.white.opacity(0.1), lineWidth: 0.5)
-                        )
+                        .stroke(Color.white.opacity(0.1), lineWidth: 0.5)
                 )
         }
     }
@@ -44,10 +38,7 @@ extension View {
                 .background(
                     Capsule()
                         .fill(.ultraThinMaterial)
-                        .overlay(
-                            Capsule()
-                                .stroke(Color.white.opacity(0.1), lineWidth: 0.5)
-                        )
+                        .stroke(Color.white.opacity(0.1), lineWidth: 0.5)
                 )
         }
     }

@@ -61,6 +61,7 @@ struct AppPaywallView: View {
             }
         }
         .task { await purchaseManager.loadProducts() }
+        .errorAlert(message: Bindable(purchaseManager).errorMessage, localization: loc)
     }
 
     // MARK: - Background
@@ -139,10 +140,10 @@ struct AppPaywallView: View {
             PaywallBenefitRow(icon: "star.fill", text: loc.localizedString(for: .paywallBenefitExclusive))
         }
         .padding(20)
-        .background(Color.white.opacity(0.05))
-        .clipShape(RoundedRectangle(cornerRadius: 20))
-        .overlay(
+        .clipShape(.rect(cornerRadius: 20))
+        .background(
             RoundedRectangle(cornerRadius: 20)
+                .fill(Color.white.opacity(0.05))
                 .stroke(Color.white.opacity(0.1), lineWidth: 1)
         )
     }
@@ -151,8 +152,7 @@ struct AppPaywallView: View {
 
     private var pricingCards: some View {
         VStack(spacing: 10) {
-            ForEach(orderedProducts.indices, id: \.self) { index in
-                let product = orderedProducts[index]
+            ForEach(Array(orderedProducts.enumerated()), id: \.element.id) { index, product in
                 PaywallPricingCard(
                     product: product,
                     badge: badge(for: index),
@@ -182,8 +182,12 @@ struct AppPaywallView: View {
                 PrimaryButton(title: loc.localizedString(for: .paywallStartPro)) {
                     Task {
                         let product = orderedProducts[selectedIndex]
-                        try? await purchaseManager.purchase(product)
-                        if purchaseManager.isProUser { dismiss() }
+                        do {
+                            try await purchaseManager.purchase(product)
+                            if purchaseManager.isProUser { dismiss() }
+                        } catch {
+                            purchaseManager.errorMessage = error.localizedDescription
+                        }
                     }
                 }
 
@@ -253,7 +257,7 @@ private struct PaywallPricingCard: View {
                 if let badge {
                     Text(badge)
                         .font(.caption2)
-                        .fontWeight(.bold)
+                        .bold()
                         .foregroundStyle(Color.appBackground)
                         .padding(.horizontal, 8)
                         .padding(.vertical, 4)
@@ -267,10 +271,10 @@ private struct PaywallPricingCard: View {
                     .padding(.leading, 8)
             }
             .padding(16)
-            .background(isSelected ? Color.appPrimary.opacity(0.12) : Color.white.opacity(0.05))
-            .clipShape(RoundedRectangle(cornerRadius: 16))
-            .overlay(
+            .clipShape(.rect(cornerRadius: 16))
+            .background(
                 RoundedRectangle(cornerRadius: 16)
+                    .fill(isSelected ? Color.appPrimary.opacity(0.12) : Color.white.opacity(0.05))
                     .stroke(
                         isSelected ? Color.appPrimary.opacity(0.6) : Color.white.opacity(0.08),
                         lineWidth: isSelected ? 1.5 : 1

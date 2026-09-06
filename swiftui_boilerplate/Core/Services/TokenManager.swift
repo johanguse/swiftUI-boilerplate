@@ -2,7 +2,9 @@ import Foundation
 import Security
 
 /// Stores JWT access and refresh tokens in the Keychain; expiry in UserDefaults.
-final class TokenManager {
+/// An actor because the Keychain read/delete/add sequence is not atomic, and
+/// `APIClient` reads/writes tokens from concurrent network request tasks.
+actor TokenManager {
 
     static let shared = TokenManager()
     private init() {}

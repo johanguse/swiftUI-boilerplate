@@ -101,7 +101,7 @@ final class APIClient {
         req.httpMethod = "POST"
         req.httpBody = body
         req.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
-        injectAuth(&req)
+        await injectAuth(&req)
 
         let (data, response) = try await session.data(for: req)
         try validate(response, data: data)
@@ -120,7 +120,7 @@ final class APIClient {
         req.httpMethod = method
         req.setValue("application/json", forHTTPHeaderField: "Content-Type")
         req.httpBody = body
-        injectAuth(&req)
+        await injectAuth(&req)
         let (data, response) = try await session.data(for: req)
         try validate(response, data: data)
         return try decoder.decode(T.self, from: data)
@@ -136,8 +136,8 @@ final class APIClient {
         return url
     }
 
-    private func injectAuth(_ req: inout URLRequest) {
-        if let token = TokenManager.shared.token {
+    private func injectAuth(_ req: inout URLRequest) async {
+        if let token = await TokenManager.shared.token {
             req.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         }
     }
@@ -187,7 +187,7 @@ final class APIDataSource {
 
     /// Validates the stored token by fetching the current user. Returns nil if expired or invalid.
     func restoreSession() async throws -> APIUserDTO? {
-        guard !TokenManager.shared.isExpired else { return nil }
+        guard await !TokenManager.shared.isExpired else { return nil }
         do {
             let wrapper: APIDataWrapper<APIUserDTO> = try await client.get(APIConfig.apiPath("/users/me"))
             currentUserDTO = wrapper.data
@@ -205,7 +205,7 @@ final class APIDataSource {
                 APIConfig.authPath("/login"),
                 body: EmailPasswordRequest(email: email, password: password)
             )
-            applyAuthData(wrapper.data)
+            await applyAuthData(wrapper.data)
             return wrapper.data.user
         } catch {
             throw mapAuthError(error)
@@ -218,7 +218,7 @@ final class APIDataSource {
                 APIConfig.authPath("/register"),
                 body: SignUpRequest(email: email, password: password, name: name)
             )
-            applyAuthData(wrapper.data)
+            await applyAuthData(wrapper.data)
             return wrapper.data.user
         } catch let e as AppError {
             throw e
@@ -246,11 +246,17 @@ final class APIDataSource {
     }
 
     func signOut() async throws {
-        defer {
+        // `defer` can't await, and clearing the token is actor-isolated now,
+        // so both success and failure paths clear state explicitly below.
+        do {
+            try await client.postVoid(APIConfig.authPath("/logout"))
+        } catch {
             currentUserDTO = nil
-            TokenManager.shared.clear()
+            await TokenManager.shared.clear()
+            throw error
         }
-        try await client.postVoid(APIConfig.authPath("/logout"))
+        currentUserDTO = nil
+        await TokenManager.shared.clear()
     }
 
     // MARK: - Users
@@ -288,10 +294,10 @@ final class APIDataSource {
 
     // MARK: - Private
 
-    private func applyAuthData(_ auth: APIAuthData) {
+    private func applyAuthData(_ auth: APIAuthData) async {
         let token = auth.accessToken ?? ""
         let expiry = Date().addingTimeInterval(86400 * 7) // 7-day default; JWT embeds real expiry
-        TokenManager.shared.save(token: token, refreshToken: auth.refreshToken, expiresAt: expiry)
+        await TokenManager.shared.save(token: token, refreshToken: auth.refreshToken, expiresAt: expiry)
         currentUserDTO = auth.user
     }
 

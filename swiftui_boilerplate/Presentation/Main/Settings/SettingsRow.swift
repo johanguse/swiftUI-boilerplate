@@ -18,7 +18,7 @@ struct SettingsRow: View {
                     .foregroundStyle(.white)
                     .frame(width: 32, height: 32)
                     .background(iconColor)
-                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                    .clipShape(.rect(cornerRadius: 8))
 
                 Text(label)
                     .font(.subheadline)
@@ -59,7 +59,7 @@ struct SettingsToggleRow: View {
                 .foregroundStyle(.white)
                 .frame(width: 32, height: 32)
                 .background(iconColor)
-                .clipShape(RoundedRectangle(cornerRadius: 8))
+                .clipShape(.rect(cornerRadius: 8))
 
             Text(label)
                 .font(.subheadline)

@@ -115,6 +115,7 @@ enum LocalizationKey: String {
     case ok = "ok"
     case error = "error"
     case success = "success"
+    case back = "back"
 
     // Validation
     case invalidEmail = "invalid_email"
@@ -124,6 +125,8 @@ enum LocalizationKey: String {
 
     // Auth — social buttons & close
     case close = "close"
+    case showPassword = "show_password"
+    case hidePassword = "hide_password"
     case welcomeTagline = "welcome_tagline"
     case continueWithApple = "continue_with_apple"
     case continueWithGoogle = "continue_with_google"

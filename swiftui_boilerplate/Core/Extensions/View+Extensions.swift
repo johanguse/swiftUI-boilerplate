@@ -5,7 +5,7 @@ extension View {
     func primaryCardStyle() -> some View {
         self
             .background(Color.appSurface)
-            .clipShape(RoundedRectangle(cornerRadius: 16))
+            .clipShape(.rect(cornerRadius: 16))
             .shadow(color: Color.black.opacity(0.06), radius: 8, x: 0, y: 2)
     }
 
@@ -15,10 +15,7 @@ extension View {
             .background(
                 RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
                     .fill(Color.white.opacity(0.05))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                            .stroke(Color.white.opacity(0.08), lineWidth: 1)
-                    )
+                    .stroke(Color.white.opacity(0.08), lineWidth: 1)
             )
     }
 
@@ -32,45 +29,7 @@ extension View {
         }
     }
 
-    // MARK: - Error Alert
-    func errorAlert(message: Binding<String?>) -> some View {
-        self.alert(
-            "Error",
-            isPresented: Binding(
-                get: { message.wrappedValue != nil },
-                set: { if !$0 { message.wrappedValue = nil } }
-            ),
-            actions: {
-                Button("OK") { message.wrappedValue = nil }
-            },
-            message: {
-                if let msg = message.wrappedValue {
-                    Text(msg)
-                }
-            }
-        )
-    }
-
-    // MARK: - Success Alert
-    func successAlert(message: Binding<String?>) -> some View {
-        self.alert(
-            "Success",
-            isPresented: Binding(
-                get: { message.wrappedValue != nil },
-                set: { if !$0 { message.wrappedValue = nil } }
-            ),
-            actions: {
-                Button("OK") { message.wrappedValue = nil }
-            },
-            message: {
-                if let msg = message.wrappedValue {
-                    Text(msg)
-                }
-            }
-        )
-    }
-
-    // MARK: - Localized Alerts (preferred)
+    // MARK: - Localized Alerts
     func errorAlert(message: Binding<String?>, localization: LocalizationManager) -> some View {
         self.alert(
             localization.localizedString(for: .error),

@@ -14,7 +14,7 @@ struct swiftui_boilerplateApp: App {
                 .task { await container.restoreSession() }
                 .task {
                     // Pass container to AppDelegate after init
-                    await MainActor.run { appDelegate.container = container }
+                    appDelegate.container = container
                 }
         }
     }
@@ -30,7 +30,7 @@ private struct RootView: View {
 
         Group {
             if router.isCheckingSession {
-                LaunchView()
+                LaunchView(localization: container.localizationManager)
             } else if router.needsOnboarding {
                 OnboardingView(
                     localization: container.localizationManager,

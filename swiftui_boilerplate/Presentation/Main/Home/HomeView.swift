@@ -45,7 +45,7 @@ struct HomeView: View {
                     .foregroundStyle(Color.appSubtext)
                 Text(viewModel.currentUser?.fullName ?? "")
                     .font(.title2)
-                    .fontWeight(.bold)
+                    .bold()
                     .foregroundStyle(Color.appText)
                 if let jobTitle = viewModel.currentUser?.jobTitle, !jobTitle.isEmpty {
                     Text(jobTitle)
@@ -64,7 +64,7 @@ struct HomeView: View {
         }
         .padding(20)
         .background(Color.appSurface)
-        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .clipShape(.rect(cornerRadius: 16))
         .shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 2)
     }
 
@@ -115,7 +115,7 @@ struct HomeView: View {
             }
         }
         .background(Color.appSurface)
-        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .clipShape(.rect(cornerRadius: 16))
         .shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 2)
     }
 
@@ -131,7 +131,7 @@ struct HomeView: View {
         .frame(maxWidth: .infinity)
         .padding(.vertical, 40)
         .background(Color.appSurface)
-        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .clipShape(.rect(cornerRadius: 16))
         .shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 2)
     }
 
@@ -151,7 +151,7 @@ struct HomeView: View {
             }
             .padding(20)
             .background(Color.appSurface)
-            .clipShape(RoundedRectangle(cornerRadius: 16))
+            .clipShape(.rect(cornerRadius: 16))
             .shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 2)
 
             // People section skeleton
@@ -168,7 +168,7 @@ struct HomeView: View {
                     }
                 }
                 .background(Color.appSurface)
-                .clipShape(RoundedRectangle(cornerRadius: 16))
+                .clipShape(.rect(cornerRadius: 16))
                 .shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 2)
             }
         }

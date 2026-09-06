@@ -112,9 +112,12 @@
 "ok" = "Tamam";
 "error" = "Hata";
 "success" = "Başarılı";
+"back" = "Geri";
 
 // MARK: - Auth (sosyal & kapat)
 "close" = "Kapat";
+"show_password" = "Şifreyi göster";
+"hide_password" = "Şifreyi gizle";
 "welcome_tagline" = "Yolculuğunuz burada başlıyor.";
 "continue_with_apple" = "Apple ile Devam Et";
 "continue_with_google" = "Google ile Devam Et";

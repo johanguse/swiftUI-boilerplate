@@ -52,6 +52,7 @@ struct GlassToolbar: View {
                                 .frame(width: 44, height: 44)
                         }
                         .glassEffect(.regular.interactive(), in: .circle)
+                        .accessibilityLabel(item.accessibilityLabel)
                     }
                 }
             }
@@ -64,6 +65,7 @@ struct GlassToolbar: View {
                             .frame(width: 44, height: 44)
                     }
                     .background(.ultraThinMaterial, in: Circle())
+                    .accessibilityLabel(item.accessibilityLabel)
                 }
             }
         }
@@ -73,6 +75,7 @@ struct GlassToolbar: View {
 struct GlassToolbarItem: Identifiable {
     let id = UUID()
     let icon: String
+    let accessibilityLabel: String
     let action: () -> Void
 }
 
@@ -97,10 +100,10 @@ struct GlassToolbarItem: Identifiable {
             }
 
             GlassToolbar(items: [
-                GlassToolbarItem(icon: "pencil") {},
-                GlassToolbarItem(icon: "eraser") {},
-                GlassToolbarItem(icon: "scissors") {},
-                GlassToolbarItem(icon: "square.and.arrow.up") {}
+                GlassToolbarItem(icon: "pencil", accessibilityLabel: "Edit") {},
+                GlassToolbarItem(icon: "eraser", accessibilityLabel: "Erase") {},
+                GlassToolbarItem(icon: "scissors", accessibilityLabel: "Cut") {},
+                GlassToolbarItem(icon: "square.and.arrow.up", accessibilityLabel: "Share") {}
             ])
         }
     }

@@ -121,7 +121,7 @@ struct WelcomeView: View {
             }
             .signInWithAppleButtonStyle(.white)
             .frame(height: 52)
-            .clipShape(RoundedRectangle(cornerRadius: 14))
+            .clipShape(.rect(cornerRadius: 14))
 
             SocialAuthButton(
                 title: loc.localizedString(for: .continueWithGoogle),

@@ -42,6 +42,7 @@ struct SignUpView: View {
                         .foregroundStyle(Color.appText)
                 }
                 .buttonStyle(.plain)
+                .accessibilityLabel(localization.localizedString(for: .back))
             }
         }
         .hideKeyboardOnTap()
@@ -54,7 +55,7 @@ struct SignUpView: View {
         VStack(alignment: .leading, spacing: 8) {
             Text(localization.localizedString(for: .createAccount))
                 .font(.title2)
-                .fontWeight(.bold)
+                .bold()
                 .foregroundStyle(Color.appText)
 
             Text(localization.localizedString(for: .welcomeSubtitle))
@@ -83,14 +84,18 @@ struct SignUpView: View {
                 title: localization.localizedString(for: .password),
                 text: $viewModel.password,
                 textContentType: .newPassword,
-                isSecure: true
+                isSecure: true,
+                showPasswordAccessibilityLabel: localization.localizedString(for: .showPassword),
+                hidePasswordAccessibilityLabel: localization.localizedString(for: .hidePassword)
             )
 
             AppTextField(
                 title: localization.localizedString(for: .confirmPassword),
                 text: $viewModel.confirmPassword,
                 textContentType: .newPassword,
-                isSecure: true
+                isSecure: true,
+                showPasswordAccessibilityLabel: localization.localizedString(for: .showPassword),
+                hidePasswordAccessibilityLabel: localization.localizedString(for: .hidePassword)
             )
 
             PrimaryButton(

@@ -21,10 +21,10 @@ struct SocialAuthButton: View {
             .frame(maxWidth: .infinity)
             .frame(height: 52)
             .padding(.horizontal, 16)
-            .background(Color.white.opacity(0.06))
-            .clipShape(RoundedRectangle(cornerRadius: 14))
-            .overlay(
+            .clipShape(.rect(cornerRadius: 14))
+            .background(
                 RoundedRectangle(cornerRadius: 14)
+                    .fill(Color.white.opacity(0.06))
                     .stroke(Color.white.opacity(0.12), lineWidth: 1)
             )
         }
@@ -40,7 +40,7 @@ struct SocialAuthButton: View {
                 .foregroundStyle(Color.black)
                 .frame(width: 24, height: 24)
                 .background(Color.white)
-                .clipShape(RoundedRectangle(cornerRadius: 7))
+                .clipShape(.rect(cornerRadius: 7))
         } else {
             Image(systemName: symbol)
                 .font(.system(size: 17, weight: .semibold))

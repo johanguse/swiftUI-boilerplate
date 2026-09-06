@@ -20,7 +20,7 @@ struct SettingsSectionCard<Content: View>: View {
             }
             .padding(.horizontal, 16)
             .background(Color.appSurface)
-            .clipShape(RoundedRectangle(cornerRadius: 16))
+            .clipShape(.rect(cornerRadius: 16))
             .shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 2)
         }
     }

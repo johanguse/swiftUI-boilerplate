@@ -22,7 +22,7 @@ struct PrimaryButton: View {
             .frame(height: 52)
             .background(isDisabled ? Color.appPrimary.opacity(0.4) : Color.appPrimary)
             .foregroundStyle(.white)
-            .clipShape(RoundedRectangle(cornerRadius: 14))
+            .clipShape(.rect(cornerRadius: 14))
         }
         .disabled(isLoading || isDisabled)
         .animation(.easeInOut, value: isLoading)

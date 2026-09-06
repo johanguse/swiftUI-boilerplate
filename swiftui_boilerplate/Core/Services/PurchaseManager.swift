@@ -21,6 +21,7 @@ final class PurchaseManager {
     private(set) var isProUser: Bool = false
     private(set) var isLoadingRestore: Bool = false
     var isPresentingPaywall: Bool = false
+    var errorMessage: String?
 
     // MARK: - Configure (call after sign-in)
 
@@ -40,20 +41,21 @@ final class PurchaseManager {
     // MARK: - Restore
 
     func restorePurchases() async {
-        #if canImport(RevenueCat)
         isLoadingRestore = true
         defer { isLoadingRestore = false }
-        if let info = try? await Purchases.shared.restorePurchases() {
+        #if canImport(RevenueCat)
+        do {
+            let info = try await Purchases.shared.restorePurchases()
             isProUser = info.entitlements[RevenueCatConfig.proEntitlementId]?.isActive == true
+        } catch {
+            errorMessage = error.localizedDescription
         }
         #else
-        isLoadingRestore = true
-        defer { isLoadingRestore = false }
         do {
             try await AppStore.sync()
             await refreshProStatus()
         } catch {
-            // Restore failed silently — user will see no change
+            errorMessage = error.localizedDescription
         }
         #endif
     }

@@ -6,6 +6,8 @@ struct AppTextField: View {
     var keyboardType: UIKeyboardType = .default
     var textContentType: UITextContentType? = nil
     var isSecure: Bool = false
+    var showPasswordAccessibilityLabel: String = ""
+    var hidePasswordAccessibilityLabel: String = ""
     @State private var isSecureVisible: Bool = false
 
     private var autocapitalization: TextInputAutocapitalization {
@@ -47,10 +49,10 @@ struct AppTextField: View {
                 .padding(.horizontal, 14)
                 .padding(.vertical, 14)
                 .padding(.trailing, isSecure ? 44 : 0)
-                .background(Color.appSurface)
-                .clipShape(RoundedRectangle(cornerRadius: 12))
-                .overlay(
+                .clipShape(.rect(cornerRadius: 12))
+                .background(
                     RoundedRectangle(cornerRadius: 12)
+                        .fill(Color.appSurface)
                         .stroke(Color.appDivider, lineWidth: 1)
                 )
 
@@ -62,6 +64,7 @@ struct AppTextField: View {
                             .foregroundStyle(Color.appSubtext)
                             .frame(width: 44, height: 44)
                     }
+                    .accessibilityLabel(isSecureVisible ? hidePasswordAccessibilityLabel : showPasswordAccessibilityLabel)
                 }
             }
         }
@@ -82,7 +85,9 @@ struct AppTextField: View {
             title: "Password",
             text: $password,
             textContentType: .password,
-            isSecure: true
+            isSecure: true,
+            showPasswordAccessibilityLabel: "Show password",
+            hidePasswordAccessibilityLabel: "Hide password"
         )
     }
     .padding()

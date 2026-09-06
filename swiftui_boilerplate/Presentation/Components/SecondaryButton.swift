@@ -19,11 +19,11 @@ struct SecondaryButton: View {
             }
             .frame(maxWidth: .infinity)
             .frame(height: 52)
-            .background(Color.appBackground)
             .foregroundStyle(Color.appPrimary)
-            .clipShape(RoundedRectangle(cornerRadius: 14))
-            .overlay(
+            .clipShape(.rect(cornerRadius: 14))
+            .background(
                 RoundedRectangle(cornerRadius: 14)
+                    .fill(Color.appBackground)
                     .stroke(Color.appPrimary, lineWidth: 1.5)
             )
         }

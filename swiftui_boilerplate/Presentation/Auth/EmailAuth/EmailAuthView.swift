@@ -102,7 +102,7 @@ struct EmailAuthView: View {
             VStack(alignment: .leading, spacing: 8) {
                 Text(localization.localizedString(for: .checkYourEmail))
                     .font(.title2)
-                    .fontWeight(.bold)
+                    .bold()
                     .foregroundStyle(Color.appText)
 
                 Text(localization.localizedString(for: .emailAuthCodeSubtitle))

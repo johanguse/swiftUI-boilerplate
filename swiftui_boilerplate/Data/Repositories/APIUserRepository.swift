@@ -20,6 +20,6 @@ final class APIUserRepository: UserRepositoryProtocol {
     }
 
     func registerPushToken(_ token: String) async throws {
-        try? await dataSource.registerPushToken(token)
+        try await dataSource.registerPushToken(token)
     }
 }

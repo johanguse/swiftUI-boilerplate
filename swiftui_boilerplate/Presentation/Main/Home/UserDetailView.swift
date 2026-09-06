@@ -37,7 +37,7 @@ struct UserDetailView: View {
             VStack(spacing: 6) {
                 Text(user.fullName)
                     .font(.title2)
-                    .fontWeight(.bold)
+                    .bold()
                     .foregroundStyle(Color.appText)
 
                 Text(user.jobTitle)
@@ -91,7 +91,7 @@ private struct StatCell: View {
         VStack(spacing: 4) {
             Text(value.formatted())
                 .font(.title3)
-                .fontWeight(.bold)
+                .bold()
                 .foregroundStyle(Color.appText)
             Text(label)
                 .font(.caption)

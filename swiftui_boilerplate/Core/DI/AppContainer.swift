@@ -41,7 +41,11 @@ final class AppContainer {
     private func wireNotificationService() {
         notificationService.onTokenRegistered = { [weak self] token in
             guard let self else { return }
-            try? await self.userRepository.registerPushToken(token)
+            do {
+                try await self.userRepository.registerPushToken(token)
+            } catch {
+                self.crashReporter.record(error)
+            }
         }
     }
 
@@ -94,7 +98,9 @@ final class AppContainer {
         analytics.reset()
         crashReporter.clearUser()
         purchaseManager.logOut()
-        do { try await authRepository.signOut() } catch {}
+        // Sign out locally regardless of network failure; record it so silent
+        // server-side session leaks are still visible in crash reporting.
+        do { try await authRepository.signOut() } catch { crashReporter.record(error) }
         router.signOut()
     }
 

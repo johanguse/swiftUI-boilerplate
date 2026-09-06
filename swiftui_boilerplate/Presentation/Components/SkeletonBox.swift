@@ -7,7 +7,7 @@ private struct ShimmerEffect: ViewModifier {
 
     func body(content: Content) -> some View {
         content
-            .overlay(
+            .overlay {
                 GeometryReader { geo in
                     LinearGradient(
                         colors: [.clear, .white.opacity(0.5), .clear],
@@ -18,7 +18,7 @@ private struct ShimmerEffect: ViewModifier {
                     .offset(x: -geo.size.width * 0.2 + phase * (geo.size.width * 1.5))
                 }
                 .clipped()
-            )
+            }
             .onAppear {
                 withAnimation(.linear(duration: 1.4).repeatForever(autoreverses: false)) {
                     phase = 1

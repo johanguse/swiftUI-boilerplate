@@ -42,6 +42,7 @@ struct SignInView: View {
                         .foregroundStyle(Color.appText)
                 }
                 .buttonStyle(.plain)
+                .accessibilityLabel(localization.localizedString(for: .back))
             }
         }
         .hideKeyboardOnTap()
@@ -54,7 +55,7 @@ struct SignInView: View {
         VStack(alignment: .leading, spacing: 8) {
             Text(localization.localizedString(for: .signIn))
                 .font(.title2)
-                .fontWeight(.bold)
+                .bold()
                 .foregroundStyle(Color.appText)
 
             Text(localization.localizedString(for: .signInEmailSubtitle))
@@ -77,7 +78,9 @@ struct SignInView: View {
                 title: localization.localizedString(for: .password),
                 text: $viewModel.password,
                 textContentType: .password,
-                isSecure: true
+                isSecure: true,
+                showPasswordAccessibilityLabel: localization.localizedString(for: .showPassword),
+                hidePasswordAccessibilityLabel: localization.localizedString(for: .hidePassword)
             )
 
             HStack {

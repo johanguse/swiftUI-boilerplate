@@ -1,11 +1,15 @@
 import SwiftUI
 
 struct LaunchView: View {
+    let localization: LocalizationManager
+
     @State private var ringTrim: CGFloat = 0
     @State private var logoScale: CGFloat = 0.6
     @State private var logoOpacity: Double = 0
     @State private var wordmarkOffset: CGFloat = 16
     @State private var wordmarkOpacity: Double = 0
+
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         ZStack {
@@ -47,7 +51,7 @@ struct LaunchView: View {
                         .font(.system(size: 28, weight: .bold, design: .rounded))
                         .foregroundStyle(Color.appText)
 
-                    Text("launch_tagline")
+                    Text(localization.localizedString(for: .launchTagline))
                         .font(.subheadline)
                         .foregroundStyle(Color.appSubtext)
                 }
@@ -62,6 +66,15 @@ struct LaunchView: View {
     }
 
     private func runAnimations() {
+        guard !reduceMotion else {
+            ringTrim = 1.0
+            logoScale = 1.0
+            logoOpacity = 1.0
+            wordmarkOffset = 0
+            wordmarkOpacity = 1.0
+            return
+        }
+
         // Logo spring in
         withAnimation(.spring(response: 0.45, dampingFraction: 0.6)) {
             logoScale = 1.0

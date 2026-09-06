@@ -4,7 +4,6 @@ import PhotosUI
 struct SettingsView: View {
     @State private var viewModel: SettingsViewModel
     @State private var showLanguagePicker = false
-    @State private var showChangePassword = false
     @State private var changePasswordViewModel: ChangePasswordViewModel?
 
     private let themeManager: ThemeManager
@@ -52,18 +51,16 @@ struct SettingsView: View {
             .sheet(isPresented: $viewModel.showEditProfileSheet) {
                 EditProfileSheet(viewModel: viewModel, localization: localizationManager)
             }
-            .sheet(isPresented: $showChangePassword) {
-                if let cpvm = changePasswordViewModel {
-                    ChangePasswordView(
-                        viewModel: cpvm,
-                        localization: localizationManager
-                    ) {
-                        showChangePassword = false
-                        viewModel.successMessage = localizationManager.localizedString(for: .passwordChanged)
-                    }
-                    .presentationDetents([.medium, .large])
-                    .presentationDragIndicator(.visible)
+            .sheet(item: $changePasswordViewModel) { cpvm in
+                ChangePasswordView(
+                    viewModel: cpvm,
+                    localization: localizationManager
+                ) {
+                    changePasswordViewModel = nil
+                    viewModel.successMessage = localizationManager.localizedString(for: .passwordChanged)
                 }
+                .presentationDetents([.medium, .large])
+                .presentationDragIndicator(.visible)
             }
             .sheet(isPresented: $showLanguagePicker) {
                 LanguagePickerSheet(
@@ -130,7 +127,7 @@ struct SettingsView: View {
                 VStack(spacing: 3) {
                     Text(user.fullName)
                         .font(.title3)
-                        .fontWeight(.bold)
+                        .bold()
                         .foregroundStyle(Color.appText)
                     Text(user.email)
                         .font(.subheadline)
@@ -141,7 +138,7 @@ struct SettingsView: View {
         .frame(maxWidth: .infinity)
         .padding(.vertical, 24)
         .background(Color.appSurface)
-        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .clipShape(.rect(cornerRadius: 16))
         .shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 2)
     }
 
@@ -166,7 +163,6 @@ struct SettingsView: View {
                     localization: localizationManager,
                     authRepository: viewModel.authRepository
                 )
-                showChangePassword = true
             }
         }
     }
@@ -290,7 +286,7 @@ struct SettingsView: View {
                         .foregroundStyle(.white)
                         .frame(width: 32, height: 32)
                         .background(Color.appError)
-                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                        .clipShape(.rect(cornerRadius: 8))
                     Text(localizationManager.localizedString(for: .signOut))
                         .font(.subheadline)
                         .fontWeight(.medium)

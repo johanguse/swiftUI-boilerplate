@@ -42,6 +42,7 @@ struct ForgotPasswordView: View {
                         .foregroundStyle(Color.appText)
                 }
                 .buttonStyle(.plain)
+                .accessibilityLabel(localization.localizedString(for: .back))
             }
         }
         .hideKeyboardOnTap()
@@ -56,7 +57,7 @@ struct ForgotPasswordView: View {
             VStack(alignment: .leading, spacing: 8) {
                 Text(localization.localizedString(for: .forgotPasswordTitle))
                     .font(.title2)
-                    .fontWeight(.bold)
+                    .bold()
                     .foregroundStyle(Color.appText)
 
                 Text(localization.localizedString(for: .forgotPasswordSubtitle))
@@ -97,7 +98,7 @@ struct ForgotPasswordView: View {
                 VStack(spacing: 10) {
                     Text(localization.localizedString(for: .resetLinkSent))
                         .font(.title3)
-                        .fontWeight(.bold)
+                        .bold()
                         .foregroundStyle(Color.appText)
                         .multilineTextAlignment(.center)
 

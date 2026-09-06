@@ -1,28 +1,31 @@
 import SwiftUI
 
+private enum OnboardingPage: Int, CaseIterable {
+    case welcome, features, notifications, ready
+}
+
 struct OnboardingView: View {
     let localization: LocalizationManager
     let onComplete: () -> Void
     var requestNotificationPermission: (() async -> Bool)? = nil
 
-    @State private var currentPage = 0
-    private let totalPages = 4
+    @State private var currentPage: OnboardingPage = .welcome
 
     var body: some View {
         ZStack(alignment: .topTrailing) {
             TabView(selection: $currentPage) {
-                welcomePage.tag(0)
-                featuresPage.tag(1)
-                notificationsPage.tag(2)
-                readyPage.tag(3)
+                welcomePage.tag(OnboardingPage.welcome)
+                featuresPage.tag(OnboardingPage.features)
+                notificationsPage.tag(OnboardingPage.notifications)
+                readyPage.tag(OnboardingPage.ready)
             }
             .tabViewStyle(.page(indexDisplayMode: .never))
             .animation(.easeInOut(duration: 0.3), value: currentPage)
 
-            if currentPage < 3 {
+            if currentPage != .ready {
                 Button(localization.localizedString(for: .onboardingSkip)) {
                     HapticsManager.impact(.light)
-                    withAnimation { currentPage = 3 }
+                    withAnimation { currentPage = .ready }
                 }
                 .font(.subheadline)
                 .foregroundStyle(Color.appSubtext)
@@ -71,7 +74,7 @@ struct OnboardingView: View {
             Spacer()
             pageIndicator
             bottomButton(title: localization.localizedString(for: .onboardingNext)) {
-                withAnimation { currentPage = 1 }
+                withAnimation { currentPage = .features }
             }
         }
         .padding(.bottom, 48)
@@ -122,7 +125,7 @@ struct OnboardingView: View {
             Spacer()
             pageIndicator
             bottomButton(title: localization.localizedString(for: .onboardingNext)) {
-                withAnimation { currentPage = 2 }
+                withAnimation { currentPage = .notifications }
             }
         }
         .padding(.bottom, 48)
@@ -170,12 +173,12 @@ struct OnboardingView: View {
                 bottomButton(title: localization.localizedString(for: .enableNotifications)) {
                     Task {
                         _ = await requestNotificationPermission?()
-                        withAnimation { currentPage = 3 }
+                        withAnimation { currentPage = .ready }
                     }
                 }
 
                 Button(localization.localizedString(for: .notificationsLater)) {
-                    withAnimation { currentPage = 3 }
+                    withAnimation { currentPage = .ready }
                 }
                 .font(.subheadline)
                 .foregroundStyle(Color.appSubtext)
@@ -232,10 +235,10 @@ struct OnboardingView: View {
 
     private var pageIndicator: some View {
         HStack(spacing: 8) {
-            ForEach(0..<totalPages, id: \.self) { index in
+            ForEach(OnboardingPage.allCases, id: \.self) { page in
                 Capsule()
-                    .fill(currentPage == index ? Color.appPrimary : Color.appSubtext.opacity(0.3))
-                    .frame(width: currentPage == index ? 24 : 8, height: 8)
+                    .fill(currentPage == page ? Color.appPrimary : Color.appSubtext.opacity(0.3))
+                    .frame(width: currentPage == page ? 24 : 8, height: 8)
                     .animation(.spring(response: 0.3, dampingFraction: 0.7), value: currentPage)
             }
         }
@@ -263,7 +266,7 @@ private struct OnboardingFeatureRow: View {
                 .foregroundStyle(.white)
                 .frame(width: 52, height: 52)
                 .background(color.gradient)
-                .clipShape(RoundedRectangle(cornerRadius: 14))
+                .clipShape(.rect(cornerRadius: 14))
 
             VStack(alignment: .leading, spacing: 3) {
                 Text(title)
@@ -278,7 +281,7 @@ private struct OnboardingFeatureRow: View {
         }
         .padding(16)
         .background(Color.appSurface)
-        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .clipShape(.rect(cornerRadius: 16))
         .shadow(color: Color.black.opacity(0.04), radius: 6, x: 0, y: 2)
     }
 }

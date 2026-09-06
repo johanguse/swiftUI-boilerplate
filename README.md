@@ -1,6 +1,6 @@
 # SwiftUI Boilerplate
 
-A production-ready SwiftUI boilerplate with **Clean Architecture**, **FastAPI backend integration**, full **authentication flow**, **onboarding**, **Firebase-ready analytics & crash reporting**, **RevenueCat-ready in-app purchases**, **push notifications**, **theme switching**, and **multilingual (EN/TR/ES/PT-BR/PT-PT) localization** — built for iOS 17.5+.
+A production-ready SwiftUI boilerplate with **Clean Architecture**, **Cloudflare Workers (Hono) backend integration**, full **authentication flow**, **onboarding**, **Firebase-ready analytics & crash reporting**, **RevenueCat-ready in-app purchases**, **push notifications**, **theme switching**, and **multilingual (EN/TR/ES/PT-BR/PT-PT) localization** — built for iOS 26.2+.
 
 ---
 
@@ -10,7 +10,7 @@ A production-ready SwiftUI boilerplate with **Clean Architecture**, **FastAPI ba
 - **Session persistence** — Cache-first restore via Keychain; background token validation
 - **Onboarding** — 3-page animated onboarding flow with skip support
 - **Profile management** — Edit name, bio, job title, location, avatar upload (with compression)
-- **User list** — Paginated list with skeleton loading and detail view
+- **User list** — Skeleton-loading UI and detail view; wired to a `FetchUsersUseCase` stub, since the current backend has no user-list endpoint (see [Backend](#backend))
 - **Settings** — Expo-style settings screen with edit profile, change password, theme toggle, language picker
 - **Theme switching** — Light / Dark / System with instant preview
 - **Localization** — English, Turkish, Spanish, Brazilian Portuguese, European Portuguese — switchable at runtime without restart
@@ -55,7 +55,7 @@ View → ViewModel → UseCase → Repository (Protocol)
                                     ↓
                              APIDataSource (URLSession)
                                     ↓
-                          FastAPI Backend (REST)
+                    Cloudflare Workers Backend (Hono, REST)
 ```
 
 ---
@@ -152,13 +152,16 @@ swiftui_boilerplate/
 │   │       ├── SettingsView.swift     # Expo-style settings layout
 │   │       └── SettingsViewModel.swift
 │   └── Onboarding/
-│       └── OnboardingView.swift       # 3-page animated onboarding
+│       └── OnboardingView.swift       # 4-page animated onboarding
 │
-├── en.lproj/Localizable.strings       # English strings
-├── tr.lproj/Localizable.strings       # Turkish strings
-├── es.lproj/Localizable.strings       # Spanish strings
-├── pt-BR.lproj/Localizable.strings    # Brazilian Portuguese strings
-├── pt-PT.lproj/Localizable.strings    # European Portuguese strings
+├── Resources/
+│   └── Localization/
+│       ├── en.lproj/Localizable.strings       # English strings
+│       ├── tr.lproj/Localizable.strings       # Turkish strings
+│       ├── es.lproj/Localizable.strings       # Spanish strings
+│       ├── pt-BR.lproj/Localizable.strings    # Brazilian Portuguese strings
+│       ├── pt-PT.lproj/Localizable.strings    # European Portuguese strings
+│       └── pt.lproj/Localizable.strings       # Generic Portuguese fallback
 └── swiftui_boilerplateApp.swift       # @main entry point
 ```
 
@@ -200,7 +203,7 @@ Edit `APIConfig.swift`:
 
 ```swift
 enum APIConfig {
-    static let baseURL  = "https://api.yourapp.com"  // your backend
+    static let baseURL  = "https://your-worker.workers.dev"  // your Cloudflare Worker
     static let apiPrefix = "/api/v1"
 
     static func authPath(_ endpoint: String) -> String { apiPrefix + "/auth" + endpoint }
@@ -222,35 +225,35 @@ Select your simulator or device, press **⌘R**.
 
 ## Backend
 
-This boilerplate is designed to work with the companion **FastAPI backend** (`/backend`).
+This boilerplate is designed to work with the companion **[cloudflare-backend-app-boilerplate](https://github.com/johanguse/cloudflare-backend-app-boilerplate)** — a Cloudflare Workers backend built on **Hono**. It is not compatible out of the box with a FastAPI-style backend; all request/response shapes below match the Cloudflare Worker.
 
 ### Required endpoints
 
-| Method | Path | Description |
-|--------|------|-------------|
-| `POST` | `/api/v1/auth/sign-in/email` | Sign in → returns `{ user, session: { token, expiresAt } }` |
-| `POST` | `/api/v1/auth/sign-up/email` | Sign up → same response shape |
-| `POST` | `/api/v1/auth/sign-out` | Sign out |
-| `GET`  | `/api/v1/auth/session` | Validate token → returns `{ user, session: { token, expiresAt } }` |
-| `POST` | `/api/v1/auth/forgot-password` | Send reset email |
-| `GET`  | `/api/v1/users/me` | Current user profile |
-| `PATCH`| `/api/v1/users/me` | Update profile |
-| `POST` | `/api/v1/users/me/avatar` | Upload avatar (multipart/form-data) |
-| `POST` | `/api/v1/users/me/change-password` | Change password `{ current_password, new_password }` |
-| `POST` | `/api/v1/users/me/push-token` | Register push token `{ token, platform }` |
-| `GET`  | `/api/v1/users` | Paginated user list |
+| Method  | Path | Description |
+|---------|------|-------------|
+| `POST`  | `/api/v1/auth/login` | Sign in → returns `{ user, session: { token, expiresAt } }` |
+| `POST`  | `/api/v1/auth/register` | Sign up → same response shape |
+| `POST`  | `/api/v1/auth/logout` | Sign out |
+| `POST`  | `/api/v1/auth/forgot-password` | Send reset email |
+| `POST`  | `/api/v1/auth/change-password` | Change password `{ currentPassword, newPassword }` |
+| `GET`   | `/api/v1/users/me` | Current user profile — also used to validate/restore the stored session |
+| `PATCH` | `/api/v1/users/me` | Update profile |
+| `POST`  | `/api/v1/users/me/devices` | Register push token `{ token, platform }` |
+| `POST`  | `/api/v1/uploads` | Upload avatar (multipart/form-data) → returns the file's public URL |
+
+> **No user-list endpoint.** The app's `FetchUsersUseCase` and the Home/User-list screens are wired up but currently backed by a stub that always returns an empty list — there is no `GET /users` (or similar) route on the Cloudflare backend yet. Add one and implement `FetchUsersUseCase` against it, or remove the User list feature if you don't need it.
 
 ### Authentication
 
-All authenticated requests send `Authorization: Bearer <token>`. The JWT is stored in the Keychain via `TokenManager` and attached by `APIClient.inject(_:)`.
+All authenticated requests send `Authorization: Bearer <token>`. The token is stored in the Keychain via the `TokenManager` actor and attached by the API client. There is no dedicated session-validation endpoint — `restoreSession()` re-validates the stored token by calling `GET /api/v1/users/me` and treats a failure as an expired/invalid session.
 
-### Session lifetime
-
-The backend issues JWTs with a configurable lifetime (default 1 hour). To increase it for development, set in `backend/.env`:
+### Local development
 
 ```env
-JWT_LIFETIME_SECONDS=2592000   # 30 days
+# wrangler dev runs on http://127.0.0.1:8787
 ```
+
+Point `APIConfig.baseURL` at `http://127.0.0.1:8787` for local development against `wrangler dev`, or at your deployed `*.workers.dev` URL otherwise.
 
 ---
 
@@ -372,12 +375,12 @@ This boilerplate ships with RevenueCat. To use StoreKit directly, remove `Purcha
 
 | Category | Technology |
 |---|---|
-| Language | Swift 6 |
+| Language | Swift 5 language mode, approachable concurrency, `MainActor`-isolated by default |
 | UI Framework | SwiftUI |
 | State Management | `@Observable` (Observation framework) |
 | Networking | `URLSession` async/await |
-| Backend | Python FastAPI (REST + JWT) |
-| Token storage | Keychain (`Security` framework) |
+| Backend | [Cloudflare Workers + Hono](https://github.com/johanguse/cloudflare-backend-app-boilerplate) (REST + JWT) |
+| Token storage | Keychain, via the `TokenManager` actor |
 | User cache | Keychain (`UserCache`) |
 | Navigation | `NavigationStack` + path-based routing |
 | Analytics | Protocol-based; Firebase-ready |
@@ -385,7 +388,7 @@ This boilerplate ships with RevenueCat. To use StoreKit directly, remove `Purcha
 | Push notifications | APNs / FCM via Firebase |
 | In-app purchases | `PurchaseManager`; RevenueCat-ready |
 | Localization | Custom `LocalizationManager` (EN / TR / ES / PT-BR / PT-PT) |
-| Minimum iOS | 17.5 |
+| Minimum iOS | 26.2 |
 
 ---
 

@@ -11,7 +11,7 @@ import XCTest
 @MainActor
 final class swiftui_boilerplateTests: XCTestCase {
 
-    func testSupabaseProfileUpdateDTOEncodesOnlyEditableFields() throws {
+    func testToAPIUserDTOEncodesCloudflareBackendShape() throws {
         let user = User(
             id: "user-1",
             fullName: "Jane Doe",
@@ -25,19 +25,16 @@ final class swiftui_boilerplateTests: XCTestCase {
             followingCount: 11
         )
 
-        let data = try JSONEncoder().encode(user.toSupabaseProfileUpdateDTO())
+        let data = try JSONEncoder().encode(user.toAPIUserDTO())
         let json = try XCTUnwrap(JSONSerialization.jsonObject(with: data) as? [String: Any])
 
-        XCTAssertEqual(Set(json.keys), ["full_name", "email", "avatar_url", "job_title", "location", "bio"])
-        XCTAssertEqual(json["full_name"] as? String, "Jane Doe")
+        XCTAssertEqual(json["id"] as? String, "user-1")
         XCTAssertEqual(json["email"] as? String, "jane@example.com")
-        XCTAssertTrue(json["avatar_url"] is NSNull)
-        XCTAssertTrue(json["job_title"] is NSNull)
-        XCTAssertTrue(json["location"] is NSNull)
-        XCTAssertTrue(json["bio"] is NSNull)
-        XCTAssertNil(json["followers_count"])
-        XCTAssertNil(json["following_count"])
-        XCTAssertNil(json["id"])
+        XCTAssertEqual(json["name"] as? String, "Jane Doe")
+        XCTAssertTrue(json["image"] is NSNull)
+        XCTAssertNil(json["job_title"])
+        XCTAssertNil(json["location"])
+        XCTAssertNil(json["bio"])
     }
 
     func testSettingsViewModelSaveProfileAllowsClearingOptionalFields() async {
@@ -239,10 +236,6 @@ private final class MockAuthRepository: AuthRepositoryProtocol {
 private final class MockUserRepository: UserRepositoryProtocol {
     private(set) var updatedUsers: [User] = []
 
-    func fetchUsers(limit: Int, offset: Int) async throws -> [User] {
-        return []
-    }
-
     func updateProfile(_ user: User) async throws -> User {
         updatedUsers.append(user)
         return user
@@ -251,4 +244,6 @@ private final class MockUserRepository: UserRepositoryProtocol {
     func uploadAvatar(userId: String, imageData: Data) async throws -> String {
         "https://example.com/avatar.jpg"
     }
+
+    func registerPushToken(_ token: String) async throws {}
 }

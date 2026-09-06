@@ -112,9 +112,12 @@
 "ok" = "OK";
 "error" = "Error";
 "success" = "Success";
+"back" = "Back";
 
 // MARK: - Auth (social & close)
 "close" = "Close";
+"show_password" = "Show password";
+"hide_password" = "Hide password";
 "welcome_tagline" = "Your journey starts here.";
 "continue_with_apple" = "Continue with Apple";
 "continue_with_google" = "Continue with Google";

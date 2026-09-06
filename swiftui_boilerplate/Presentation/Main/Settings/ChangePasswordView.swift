@@ -25,14 +25,18 @@ struct ChangePasswordView: View {
                             title: localization.localizedString(for: .currentPassword),
                             text: $viewModel.currentPassword,
                             textContentType: .password,
-                            isSecure: true
+                            isSecure: true,
+                            showPasswordAccessibilityLabel: localization.localizedString(for: .showPassword),
+                            hidePasswordAccessibilityLabel: localization.localizedString(for: .hidePassword)
                         )
 
                         AppTextField(
                             title: localization.localizedString(for: .newPassword),
                             text: $viewModel.newPassword,
                             textContentType: .newPassword,
-                            isSecure: true
+                            isSecure: true,
+                            showPasswordAccessibilityLabel: localization.localizedString(for: .showPassword),
+                            hidePasswordAccessibilityLabel: localization.localizedString(for: .hidePassword)
                         )
 
                         VStack(alignment: .leading, spacing: 4) {
@@ -40,7 +44,9 @@ struct ChangePasswordView: View {
                                 title: localization.localizedString(for: .confirmNewPassword),
                                 text: $viewModel.confirmPassword,
                                 textContentType: .newPassword,
-                                isSecure: true
+                                isSecure: true,
+                                showPasswordAccessibilityLabel: localization.localizedString(for: .showPassword),
+                                hidePasswordAccessibilityLabel: localization.localizedString(for: .hidePassword)
                             )
                             if viewModel.passwordMismatch {
                                 Text(localization.localizedString(for: .passwordMismatch))
